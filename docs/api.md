@@ -18,7 +18,7 @@ A glob pattern or an array of them, eg: `src/**/*.js`
 #### cwd
 
 Type: `string`<br>
-Default: `process.cwd()`
+Default: `.`
 
 The directory to find source files by given glob patterns.
 
@@ -47,7 +47,7 @@ The directory to write output files, could be an absolution path or relative pat
 #### cwd
 
 Type: `string`<br>
-Default: `process.cwd()`
+Default: `.`
 
 If the dest directory is a relative path, it's manipulated relative to `cwd`.
 

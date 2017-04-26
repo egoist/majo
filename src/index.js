@@ -11,7 +11,7 @@ class Majo {
   }
 
   source(source, {
-    cwd = process.cwd()
+    cwd = '.'
   } = {}) {
     this.cwd = cwd
     this.sourcePatterns = source
@@ -29,15 +29,15 @@ class Majo {
       nodir: true,
       cwd: this.cwd,
       statCache
-    }).then(paths => paths.map(p => path.join(this.cwd, p)))
+    })
 
     this.files = {}
 
-    await Promise.all(paths.map(absolutePath => {
-      const relative = path.relative(this.cwd, absolutePath)
+    await Promise.all(paths.map(relative => {
+      const absolutePath = path.resolve(this.cwd, relative)
       return fs.readFile(absolutePath)
         .then(contents => {
-          const stat = statCache[absolutePath]
+          const stat = statCache[relative]
           const file = { contents, stat, path: absolutePath }
           if (this.filters.every(filter => {
             return filter(relative, file)
@@ -70,7 +70,7 @@ class Majo {
   }
 
   async dest(dest, {
-    cwd = process.cwd()
+    cwd = '.'
   } = {}) {
     const destPath = path.resolve(cwd, dest)
     const files = await this.process()
