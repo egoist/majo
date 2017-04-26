@@ -29,7 +29,7 @@ The directory to find source files by given glob patterns.
 Type: `function`<br>
 Required: `true`
 
-Use a middleware.
+Use a [middleware](./middleware.md).
 
 ## stream.dest(directory, [options])
 
@@ -55,6 +55,20 @@ If the dest directory is a relative path, it's manipulated relative to `cwd`.
 
 Like `stream.dest` but does not write any files.
 
+## stream.files
+
+After you called `stream.process()` or `stream.dest()`, the `stream.files` will  an object whose each entry is a file path:
+
+```js
+{
+  'src/index.js': {
+    contents: Buffer<...>,
+    stat: {}, // an fs.Stats object
+    path: '/absolute/path/to/src/index.js'
+  }
+}
+```
+
 ## stream.filter(handler)
 
 ### handler(relative, file)
@@ -76,3 +90,27 @@ An object which contains relevant file data:
   path: '/absolute/path/to/this/file'
 }
 ```
+
+## stream.meta
+
+Type: `Object`<br>
+Default: `{}`
+
+An object which is shared across middlewares, you can use this to pass down data from a middleware to another.
+
+## stream.transform(relative, handler)
+
+It should return a transformed `utf-8` string or a Promise which resolves such string.
+
+### relative
+
+Relative path.
+
+### handler(decodedContents)
+
+#### decodedContents
+
+Type: `string`<br>
+Encoding: `utf-8`
+
+Decoded file content, a string in `utf-8` encoding.

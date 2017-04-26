@@ -47,14 +47,7 @@ class Majo {
         })
     }))
 
-    const callContext = {
-      cwd: this.cwd,
-      files: this.files,
-      meta: this.meta,
-      transform: this.transform
-    }
-
-    await series(this.middlewares.map(m => () => m.call(callContext, callContext)))
+    await series(this.middlewares.map(m => () => m.call(this, this)))
 
     return this.files
   }
