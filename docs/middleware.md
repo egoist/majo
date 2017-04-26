@@ -1,6 +1,6 @@
 # Middleware
 
-A middleware is a function thay accepts middleware context as the first argument:
+A middleware is a function that accepts middleware context as the first argument:
 
 ```js
 function myMiddleware(context) {
