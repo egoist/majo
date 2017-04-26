@@ -61,7 +61,8 @@ class Majo {
     const contents = this.files[relative].contents.toString()
     const result = fn(contents)
     if (!result.then) {
-      return this.files[relative].contents = Buffer.from(result)
+      this.files[relative].contents = Buffer.from(result)
+      return
     }
     return result.then(newContents => {
       this.files[relative].contents = Buffer.from(newContents)
@@ -70,7 +71,7 @@ class Majo {
 
   async dest(dest, {
     cwd = process.cwd()
-  }) {
+  } = {}) {
     const destPath = path.resolve(cwd, dest)
     const files = await this.process()
 
