@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "inquirer": "^3.0.6",
+    "pupa": "^1.0.0"
+  }
+}

@@ -23,7 +23,8 @@
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": ["/examples/"]
   },
   "babel": {
     "env": {
@@ -57,7 +58,8 @@
     ],
     "ignores": [
       "test/fixture/**",
-      "test/output/**"
+      "test/output/**",
+      "examples/**"
     ]
   },
   "dependencies": {

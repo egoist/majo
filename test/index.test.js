@@ -25,7 +25,7 @@ test('middleware', async () => {
 
   await stream.process()
 
-  expect(stream.fileContent('tmp.js')).toMatch(`var a = function () { return 'aaa'; }`)
+  expect(stream.fileContents('tmp.js')).toMatch(`var a = function () { return 'aaa'; }`)
 })
 
 test('filter', async () => {

@@ -6,7 +6,6 @@ import globby from 'globby'
 class Majo {
   constructor() {
     this.middlewares = []
-    this.filters = []
     this.meta = {}
   }
 
@@ -39,11 +38,7 @@ class Majo {
         .then(contents => {
           const stat = statCache[relative]
           const file = { contents, stat, path: absolutePath }
-          if (this.filters.every(filter => {
-            return filter(relative, file)
-          })) {
-            this.files[relative] = file
-          }
+          this.files[relative] = file
         })
     }))
 
@@ -53,7 +48,13 @@ class Majo {
   }
 
   filter(fn) {
-    this.filters.push(fn)
+    this.use(context => {
+      for (const relative in context.files) {
+        if (!fn(relative, context.files[relative])) {
+          delete context.files[relative]
+        }
+      }
+    })
     return this
   }
 
@@ -83,8 +84,13 @@ class Majo {
     }))
   }
 
-  fileContent(relative) {
+  fileContents(relative) {
     return this.file(relative).contents.toString()
+  }
+
+  writeContents(relative, string) {
+    this.files[relative].contents = Buffer.from(string)
+    return this
   }
 
   fileStat(relative) {
