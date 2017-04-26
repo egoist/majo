@@ -9,6 +9,10 @@ function myMiddleware(context) {
 }
 ```
 
+> **Note:**
+>
+> `this` in middleware is also pointed to `context`
+
 ## context
 
 ### files

@@ -33,6 +33,8 @@ Use a middleware.
 
 ## stream.dest(directory, [options])
 
+Write files to disk and returns a Promise.
+
 ### directory
 
 Type: `string`<br>
@@ -52,3 +54,25 @@ If the dest directory is a relative path, it's manipulated relative to `cwd`.
 ## stream.process()
 
 Like `stream.dest` but does not write any files.
+
+## stream.filter(handler)
+
+### handler(relative, file)
+
+Return `true` to keep this file, `false` otherwise, taking two arguments:
+
+#### relative
+
+Relative path to this file.
+
+#### file
+
+An object which contains relevant file data:
+
+```js
+{
+  contents: Buffer<...>,
+  stat: {}, // fs.Stats object
+  path: '/absolute/path/to/this/file'
+}
+```
