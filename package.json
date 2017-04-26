@@ -1,0 +1,68 @@
+{
+  "name": "majo",
+  "version": "0.0.0",
+  "description": "my badass project",
+  "repository": {
+    "url": "egoist/majo",
+    "type": "git"
+  },
+  "main": "dist/majo.common.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest && npm run lint && npm run build",
+    "lint": "xo",
+    "build": "bili"
+  },
+  "bili": {
+    "buble": {
+      "target": {"node": 4}
+    }
+  },
+  "author": "egoist <0x142857@gmail.com>",
+  "license": "MIT",
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "node": "current"
+              }
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.4.0",
+    "bili": "^0.14.0",
+    "buble": "^0.15.2",
+    "eslint-config-rem": "^3.0.0",
+    "jest-cli": "^19.0.0",
+    "xo": "^0.18.0"
+  },
+  "xo": {
+    "extends": "rem",
+    "esnext": true,
+    "envs": [
+      "jest"
+    ],
+    "ignores": [
+      "test/fixture/**",
+      "test/output/**"
+    ]
+  },
+  "dependencies": {
+    "fs-promise": "^2.0.2",
+    "globby": "^6.1.0",
+    "promise.series": "^0.1.0"
+  }
+}
