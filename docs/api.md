@@ -114,3 +114,11 @@ Type: `string`<br>
 Encoding: `utf-8`
 
 Decoded file content, a string in `utf-8` encoding.
+
+## stream.fileContents(relative)
+
+Get decoded file contents by given relative path.
+
+## stream.writeContents(relative, contents)
+
+Write decoded contents to a file by given relative path.
