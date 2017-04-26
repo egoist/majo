@@ -36,8 +36,8 @@ class Majo {
       const absolutePath = path.resolve(this.cwd, relative)
       return fs.readFile(absolutePath)
         .then(contents => {
-          const stat = statCache[relative]
-          const file = { contents, stat, path: absolutePath }
+          const stats = statCache[relative]
+          const file = { contents, stats, path: absolutePath }
           this.files[relative] = file
         })
     }))
@@ -94,7 +94,7 @@ class Majo {
   }
 
   fileStat(relative) {
-    return this.file(relative).stat
+    return this.file(relative).stats
   }
 
   file(relative) {

@@ -63,7 +63,7 @@ After you called `stream.process()` or `stream.dest()`, the `stream.files` will 
 {
   'src/index.js': {
     contents: Buffer<...>,
-    stat: {}, // an fs.Stats object
+    stats: {}, // an fs.Stats object
     path: '/absolute/path/to/src/index.js'
   }
 }
@@ -86,7 +86,7 @@ An object which contains relevant file data:
 ```js
 {
   contents: Buffer<...>,
-  stat: {}, // fs.Stats object
+  stats: {}, // fs.Stats object
   path: '/absolute/path/to/this/file'
 }
 ```
