@@ -15,9 +15,13 @@ const majo = require('majo')
 
 const stream = majo()
 
+// Given that you have js/app.js js/index.js
 stream
   .source('js/**')
-  .dest('dist/js')
+  .dest('dist')
+  .then(() => {
+    // Now you got dist/js/app.js dist/js/index.js
+  })
 ```
 
 ## Support
