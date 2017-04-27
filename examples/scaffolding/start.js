@@ -1,7 +1,7 @@
 const path = require('path')
 const ask = require('inquirer')
 const pupa = require('pupa')
-const majo = require('../../')
+const majo = require('majo')
 
 const stream = majo()
 

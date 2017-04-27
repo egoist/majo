@@ -1,6 +1,7 @@
 {
-  "devDependencies": {
+  "dependencies": {
     "inquirer": "^3.0.6",
+    "majo": "^0.1.0",
     "pupa": "^1.0.0"
   }
 }
