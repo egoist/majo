@@ -1,5 +1,11 @@
 # majo
 
+<a href="https://www.pixiv.net/member_illust.php?mode=medium&illust_id=62542828">
+<img src="https://ooo.0o0.ooo/2017/04/27/59016709425c9.jpg" width="300" />
+</a>
+
+*Art by [でんでんCOMIC1・こ24b](https://www.pixiv.net/member.php?id=12192)*
+
 [![NPM version](https://img.shields.io/npm/v/majo.svg?style=flat)](https://npmjs.com/package/majo) [![NPM downloads](https://img.shields.io/npm/dm/majo.svg?style=flat)](https://npmjs.com/package/majo) [![CircleCI](https://circleci.com/gh/egoist/majo/tree/master.svg?style=shield)](https://circleci.com/gh/egoist/majo/tree/master)  [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
 
 ## Install
