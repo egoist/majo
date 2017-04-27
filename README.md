@@ -6,7 +6,7 @@
 
 *Art by [でんでんCOMIC1・こ24b](https://www.pixiv.net/member.php?id=12192)*
 
-[![NPM version](https://img.shields.io/npm/v/majo.svg?style=flat)](https://npmjs.com/package/majo) [![NPM downloads](https://img.shields.io/npm/dm/majo.svg?style=flat)](https://npmjs.com/package/majo) [![CircleCI](https://circleci.com/gh/egoist/majo/tree/master.svg?style=shield)](https://circleci.com/gh/egoist/majo/tree/master)  [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
+[![NPM version](https://img.shields.io/npm/v/majo.svg?style=flat)](https://npmjs.com/package/majo) [![NPM downloads](https://img.shields.io/npm/dm/majo.svg?style=flat)](https://npmjs.com/package/majo) [![CircleCI](https://circleci.com/gh/egoist/majo/tree/master.svg?style=shield&circle-token=560404744e167900959a512d617a05ec5240616f)](https://circleci.com/gh/egoist/majo/tree/master)  [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
 
 ## Install
 
