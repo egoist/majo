@@ -71,10 +71,15 @@ class Majo {
   }
 
   async dest(dest, {
-    cwd = '.'
+    cwd = '.',
+    clean
   } = {}) {
     const destPath = path.resolve(cwd, dest)
     const files = await this.process()
+
+    if (clean) {
+      await fs.rmdir(destPath)
+    }
 
     await Promise.all(Object.keys(files).map(filename => {
       const { contents } = files[filename]

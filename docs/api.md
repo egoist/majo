@@ -51,6 +51,13 @@ Default: `.`
 
 If the dest directory is a relative path, it's manipulated relative to `cwd`.
 
+#### clean
+
+Type: `boolean`<br>
+Default: `undefined`
+
+Clean destination directory before writing files.
+
 ## stream.process()
 
 Like `stream.dest` but does not write any files.
