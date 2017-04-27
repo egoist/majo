@@ -1,6 +1,6 @@
 {
   "name": "majo",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "my badass project",
   "repository": {
     "url": "egoist/majo",
@@ -17,14 +17,18 @@
   },
   "bili": {
     "buble": {
-      "target": {"node": 4}
+      "target": {
+        "node": 4
+      }
     }
   },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
   "jest": {
     "testEnvironment": "node",
-    "testPathIgnorePatterns": ["/examples/"]
+    "testPathIgnorePatterns": [
+      "/examples/"
+    ]
   },
   "babel": {
     "env": {
