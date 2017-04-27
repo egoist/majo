@@ -93,7 +93,7 @@ class Majo {
     return this
   }
 
-  fileStat(relative) {
+  fileStats(relative) {
     return this.file(relative).stats
   }
 
