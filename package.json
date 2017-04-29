@@ -64,7 +64,10 @@
       "test/fixture/**",
       "test/output/**",
       "examples/**"
-    ]
+    ],
+    "rules": {
+      "guard-for-in": 0
+    }
   },
   "dependencies": {
     "fs-promise": "^2.0.2",

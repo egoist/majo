@@ -48,14 +48,13 @@ class Majo {
   }
 
   filter(fn) {
-    this.use(context => {
+    return this.use(context => {
       for (const relative in context.files) {
         if (!fn(relative, context.files[relative])) {
           delete context.files[relative]
         }
       }
     })
-    return this
   }
 
   transform(relative, fn) {
@@ -104,6 +103,20 @@ class Majo {
 
   file(relative) {
     return this.files[relative]
+  }
+
+  deleteFile(relative) {
+    delete this.files[relative]
+    return this
+  }
+
+  createFile(relative, file) {
+    this.files[relative] = file
+    return this
+  }
+
+  fileList() {
+    return Object.keys(this.files)
   }
 }
 
