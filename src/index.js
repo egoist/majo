@@ -10,10 +10,12 @@ class Majo {
   }
 
   source(source, {
-    cwd = '.'
+    cwd = '.',
+    dotFiles = true
   } = {}) {
     this.cwd = cwd
     this.sourcePatterns = source
+    this.dotFiles = dotFiles
     return this
   }
 
@@ -27,6 +29,7 @@ class Majo {
     const paths = await globby(this.sourcePatterns, {
       nodir: true,
       cwd: this.cwd,
+      dot: this.dotFiles,
       statCache
     })
 

@@ -22,6 +22,13 @@ Default: `.`
 
 The directory to find source files by given glob patterns.
 
+#### dotFiles
+
+Type: `boolean`<br>
+Default: `true`
+
+Include dot files.
+
 ## stream.use(middleware)
 
 ### middleware
