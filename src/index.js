@@ -116,7 +116,7 @@ class Majo {
   }
 
   fileList() {
-    return Object.keys(this.files)
+    return Object.keys(this.files).sort()
   }
 }
 
