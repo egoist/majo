@@ -76,6 +76,19 @@ After you called `stream.process()` or `stream.dest()`, the `stream.files` will 
 }
 ```
 
+## stream.fileList
+
+A getter which returns an array of path to resolved files, eg:
+
+```js
+[
+  '.gitignore',
+  'src/index.js'
+]
+```
+
+This is sorted by default using `Array.prototype.sort`.
+
 ## stream.filter(handler)
 
 ### handler(relative, file)

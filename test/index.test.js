@@ -39,7 +39,6 @@ test('filter', async () => {
 
   await stream.process()
 
-  const paths = Object.keys(stream.files)
-  expect(paths).toContain('tmp.js')
-  expect(paths).not.toContain('should-filter.js')
+  expect(stream.fileList).toContain('tmp.js')
+  expect(stream.fileList).not.toContain('should-filter.js')
 })
