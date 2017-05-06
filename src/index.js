@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
-import series from 'promise.series'
 import globby from 'globby'
+import ware from 'ware'
 
 class Majo {
   constructor() {
@@ -45,7 +45,12 @@ class Majo {
         })
     }))
 
-    await series(this.middlewares.map(m => () => m.call(this, this)))
+    await new Promise((resolve, reject) => {
+      ware().use(this.middlewares).run(this, err => {
+        if (err) return reject(err)
+        resolve()
+      })
+    })
 
     return this.files
   }

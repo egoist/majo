@@ -9,7 +9,5 @@ function myMiddleware(context) {
 }
 ```
 
-> **Note:**
->
-> `this` in middleware is also pointed to `context`
+The middleware function could be synchronous, asynchronous, or generator function. (it can also return a Promise)
 
