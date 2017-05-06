@@ -1,5 +1,5 @@
 import path from 'path'
-import fs from 'fs-promise'
+import fs from 'fs-extra'
 import series from 'promise.series'
 import globby from 'globby'
 
@@ -80,7 +80,7 @@ class Majo {
     const files = await this.process()
 
     if (clean) {
-      await fs.rmdir(destPath)
+      await fs.remove(destPath)
     }
 
     await Promise.all(Object.keys(files).map(filename => {

@@ -70,7 +70,7 @@
     }
   },
   "dependencies": {
-    "fs-promise": "^2.0.2",
+    "fs-extra": "^3.0.1",
     "globby": "^6.1.0",
     "promise.series": "^0.1.0"
   }
