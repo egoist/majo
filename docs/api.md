@@ -142,6 +142,18 @@ Encoding: `utf-8`
 
 Decoded file content, a string in `utf-8` encoding.
 
+## stream.file(relative)
+
+Get a file by given relative path.
+
+## stream.deleteFile(relative)
+
+Delete a file by given relative path.
+
+## stream.createFile(relative, file)
+
+Create a file.
+
 ## stream.fileContents(relative)
 
 Get decoded file contents by given relative path.
@@ -149,3 +161,7 @@ Get decoded file contents by given relative path.
 ## stream.writeContents(relative, contents)
 
 Write decoded contents to a file by given relative path.
+
+## stream.fileStats(relative)
+
+Get stats for a file by given relative path.

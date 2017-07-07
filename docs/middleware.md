@@ -11,3 +11,4 @@ function myMiddleware(context) {
 
 The middleware function could be synchronous, asynchronous, or generator function. (it can also return a Promise)
 
+The `context` is basically the [`stream`](./api.md) instance.
