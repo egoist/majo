@@ -37,7 +37,7 @@ stream
 
 ## Used By
 
-- [SAO](https://github.com/egoist/sao) - ⚔️ Futuristic scaffolding tool. 
+- [SAO](https://github.com/egoist/sao): ⚔️ Futuristic scaffolding tool. 
 
 ## Contributing
 
