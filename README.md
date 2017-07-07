@@ -35,6 +35,10 @@ stream
 [API docs](/docs/api.md)<br>
 [Middleware](/docs/middleware.md)
 
+## Used By
+
+- [SAO](https://github.com/egoist/sao) - ⚔️ Futuristic scaffolding tool. 
+
 ## Contributing
 
 1. Fork it!
