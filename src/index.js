@@ -10,10 +10,10 @@ class Majo {
   }
 
   source(source, {
-    cwd = '.',
+    baseDir = '.',
     dotFiles = true
   } = {}) {
-    this.cwd = cwd
+    this.baseDir = baseDir
     this.sourcePatterns = source
     this.dotFiles = dotFiles
     return this
@@ -28,7 +28,7 @@ class Majo {
     const statCache = {}
     const paths = await globby(this.sourcePatterns, {
       nodir: true,
-      cwd: this.cwd,
+      cwd: this.baseDir,
       dot: this.dotFiles,
       statCache
     })
@@ -36,10 +36,10 @@ class Majo {
     this.files = {}
 
     await Promise.all(paths.map(relative => {
-      const absolutePath = path.resolve(this.cwd, relative)
+      const absolutePath = path.resolve(this.baseDir, relative)
       return fs.readFile(absolutePath)
         .then(contents => {
-          const stats = statCache[path.isAbsolute(this.cwd) ? absolutePath : relative]
+          const stats = statCache[path.isAbsolute(this.baseDir) ? absolutePath : relative]
           const file = { contents, stats, path: absolutePath }
           this.files[relative] = file
         })
@@ -78,10 +78,10 @@ class Majo {
   }
 
   async dest(dest, {
-    cwd = '.',
+    baseDir = '.',
     clean
   } = {}) {
-    const destPath = path.resolve(cwd, dest)
+    const destPath = path.resolve(baseDir, dest)
     const files = await this.process()
 
     if (clean) {

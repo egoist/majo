@@ -4,13 +4,13 @@ import majo from '../src'
 
 test('main', async () => {
   await majo()
-    .source('**', { cwd: path.join(__dirname, 'fixture/source') })
-    .dest('./output', { cwd: __dirname })
+    .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
+    .dest('./output', { baseDir: __dirname })
 })
 
 test('middleware', async () => {
   const stream = majo()
-    .source('**', { cwd: path.join(__dirname, 'fixture/source') })
+    .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
     .use(({ files }) => {
       for (const filename in files) {
         if (/\.js$/.test(filename)) {
@@ -32,7 +32,7 @@ test('filter', async () => {
   const stream = majo()
 
   stream
-    .source('**', { cwd: path.join(__dirname, 'fixture/source') })
+    .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
     .filter(filepath => {
       return filepath !== 'should-filter.js'
     })

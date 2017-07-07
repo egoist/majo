@@ -6,7 +6,7 @@ const majo = require('majo')
 const stream = majo()
 
 stream
-  .source('**', { cwd: path.resolve('template') })
+  .source('**', { baseDir: path.resolve('template') })
   .use(prompt)
   .use(template)
   .filter(filepath => {

@@ -15,7 +15,7 @@ A glob pattern or an array of them, eg: `src/**/*.js`
 
 ### options
 
-#### cwd
+#### baseDir
 
 Type: `string`<br>
 Default: `.`
@@ -51,12 +51,12 @@ The directory to write output files, could be an absolution path or relative pat
 
 ### options
 
-#### cwd
+#### baseDir
 
 Type: `string`<br>
 Default: `.`
 
-If the dest directory is a relative path, it's manipulated relative to `cwd`.
+If the `directory` is a relative path, it's manipulated relative to the `baseDir`.
 
 #### clean
 
