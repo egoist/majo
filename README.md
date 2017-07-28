@@ -8,6 +8,10 @@
 
 [![NPM version](https://img.shields.io/npm/v/majo.svg?style=flat)](https://npmjs.com/package/majo) [![NPM downloads](https://img.shields.io/npm/dm/majo.svg?style=flat)](https://npmjs.com/package/majo) [![CircleCI](https://circleci.com/gh/egoist/majo/tree/master.svg?style=shield&circle-token=560404744e167900959a512d617a05ec5240616f)](https://circleci.com/gh/egoist/majo/tree/master)  [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
 
+## Introduction
+
+You can use *majo* to manipulate files like a pro, with a simple API whose core is only ≈ 150 SLOC.
+
 ## Install
 
 ```bash
@@ -24,10 +28,21 @@ const stream = majo()
 // Given that you have js/app.js js/index.js
 stream
   .source('js/**')
+  .use(ignoreSomeFiles)
   .dest('dist')
   .then(() => {
-    // Now you got dist/js/app.js dist/js/index.js
+    // Now you got filtered files
   })
+
+function ignoreSomeFiles(stream) {
+  for (const filename in stream.files) {
+    const content = stream.fileContents(filename)
+    // Remove it if content has specific string
+    if (/some-string/.test(content)) {
+      delete stream.files[filename]
+    }
+  }
+}
 ```
 
 ## Support
