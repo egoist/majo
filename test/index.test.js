@@ -42,3 +42,13 @@ test('filter', async () => {
   expect(stream.fileList).toContain('tmp.js')
   expect(stream.fileList).not.toContain('should-filter.js')
 })
+
+test('stats', async () => {
+  const stream = majo()
+
+  stream.source('**/*.md', { baseDir: path.join(__dirname, 'fixture/stats') })
+
+  await stream.process()
+
+  expect(typeof stream.files['foo.md'].stats).toBe('object')
+})

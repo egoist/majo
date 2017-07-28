@@ -13,7 +13,7 @@ class Majo {
     baseDir = '.',
     dotFiles = true
   } = {}) {
-    this.baseDir = baseDir
+    this.baseDir = path.resolve(baseDir)
     this.sourcePatterns = source
     this.dotFiles = dotFiles
     return this
