@@ -1,15 +1,42 @@
 import path from 'path'
 import fs from 'fs-extra'
 import globby from 'globby'
+// @ts-ignore
 import ware from 'ware'
 
+type Middleware = (ctx: Majo) => any
+type Glob = string | string[]
+type TransformFn = (contents: string) => Promise<string> | string
+
+interface Files {
+  [relativePath: string]: File
+}
+
+interface File {
+  path?: string,
+  contents: Buffer,
+  stats: fs.Stats,
+  [key: string]: any
+}
+
+interface StatCache {
+  [key: string]: any
+}
+
 class Majo {
+  middlewares: Middleware[]
+  meta: any
+  baseDir: string
+  sourcePatterns: Glob
+  dotFiles: boolean
+  files: Files
+
   constructor() {
     this.middlewares = []
     this.meta = {}
   }
 
-  source(source, {
+  source(source: Glob, {
     baseDir = '.',
     dotFiles = true
   } = {}) {
@@ -19,13 +46,13 @@ class Majo {
     return this
   }
 
-  use(middleware) {
+  use(middleware: Middleware) {
     this.middlewares.push(middleware)
     return this
   }
 
   async process() {
-    const statCache = {}
+    const statCache: StatCache = {}
     const paths = await globby(this.sourcePatterns, {
       nodir: true,
       cwd: this.baseDir,
@@ -35,10 +62,10 @@ class Majo {
 
     this.files = {}
 
-    await Promise.all(paths.map(relative => {
+    await Promise.all(paths.map((relative: string) => {
       const absolutePath = path.resolve(this.baseDir, relative)
       return fs.readFile(absolutePath)
-        .then(contents => {
+        .then((contents: Buffer) => {
           const stats = statCache[path.isAbsolute(this.baseDir) ? absolutePath : relative]
           const file = { contents, stats, path: absolutePath }
           this.files[relative] = file
@@ -46,7 +73,7 @@ class Majo {
     }))
 
     await new Promise((resolve, reject) => {
-      ware().use(this.middlewares).run(this, err => {
+      ware().use(this.middlewares).run(this, (err: Error) => {
         if (err) return reject(err)
         resolve()
       })
@@ -55,8 +82,8 @@ class Majo {
     return this.files
   }
 
-  filter(fn) {
-    return this.use(context => {
+  filter(fn: (relativePath: string, file: File) => boolean) {
+    return this.use((context: this) => {
       for (const relative in context.files) {
         if (!fn(relative, context.files[relative])) {
           delete context.files[relative]
@@ -65,21 +92,21 @@ class Majo {
     })
   }
 
-  transform(relative, fn) {
+  transform(relative: string, fn: TransformFn) {
     const contents = this.files[relative].contents.toString()
     const result = fn(contents)
-    if (!result.then) {
+    if (typeof result === 'string') {
       this.files[relative].contents = Buffer.from(result)
       return
     }
-    return result.then(newContents => {
+    return result.then((newContents: string) => {
       this.files[relative].contents = Buffer.from(newContents)
     })
   }
 
-  async dest(dest, {
+  async dest(dest: string, {
     baseDir = '.',
-    clean
+    clean = false
   } = {}) {
     const destPath = path.resolve(baseDir, dest)
     const files = await this.process()
@@ -88,7 +115,7 @@ class Majo {
       await fs.remove(destPath)
     }
 
-    await Promise.all(Object.keys(files).map(filename => {
+    await Promise.all(Object.keys(files).map((filename: string) => {
       const { contents } = files[filename]
       const target = path.join(destPath, filename)
       return fs.ensureDir(path.dirname(target))
@@ -96,29 +123,29 @@ class Majo {
     }))
   }
 
-  fileContents(relative) {
+  fileContents(relative: string) {
     return this.file(relative).contents.toString()
   }
 
-  writeContents(relative, string) {
-    this.files[relative].contents = Buffer.from(string)
+  writeContents(relative: string, str: string) {
+    this.files[relative].contents = Buffer.from(str)
     return this
   }
 
-  fileStats(relative) {
+  fileStats(relative: string) {
     return this.file(relative).stats
   }
 
-  file(relative) {
+  file(relative: string) {
     return this.files[relative]
   }
 
-  deleteFile(relative) {
+  deleteFile(relative: string) {
     delete this.files[relative]
     return this
   }
 
-  createFile(relative, file) {
+  createFile(relative: string, file: File) {
     this.files[relative] = file
     return this
   }
@@ -128,4 +155,6 @@ class Majo {
   }
 }
 
-export default opts => new Majo(opts)
+export default function () {
+  return new Majo()
+}
