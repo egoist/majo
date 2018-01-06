@@ -20,7 +20,7 @@ interface File {
 }
 
 interface StatCache {
-  [key: string]: any
+  [path: string]: fs.Stats
 }
 
 class Majo {
