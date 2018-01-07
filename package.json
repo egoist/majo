@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "npm run lint && npm run build && jest",
+    "test": "npm run build && npm run lint && jest",
     "prepublishOnly": "npm run build",
     "lint": "xo",
     "build": "bili"
