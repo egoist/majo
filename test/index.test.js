@@ -1,6 +1,6 @@
 import path from 'path'
 import * as buble from 'buble'
-import majo from '../src'
+import majo from '../dist/majo'
 
 test('main', async () => {
   await majo()
