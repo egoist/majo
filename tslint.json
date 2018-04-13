@@ -7,7 +7,8 @@
     "semicolon": [true, "never"],
     "promise-function-async": false,
     "object-curly-spacing": [true, "always"],
-    "type-literal-delimiter": false
+    "type-literal-delimiter": false,
+    "no-single-line-block-comment": false
   },
   "rulesDirectory": []
 }
