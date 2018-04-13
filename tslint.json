@@ -1,11 +1,13 @@
 {
-    "defaultSeverity": "error",
-    "extends": "tslint-xo/space",
-    "jsRules": {},
-    "rules": {
-      "no-reference": false,
-      "semicolon": [true, "never"],
-      "promise-function-async": false
-    },
-    "rulesDirectory": []
+  "defaultSeverity": "error",
+  "extends": ["tslint-xo/space"],
+  "jsRules": {},
+  "rules": {
+    "no-reference": false,
+    "semicolon": [true, "never"],
+    "promise-function-async": false,
+    "object-curly-spacing": [true, "always"],
+    "type-literal-delimiter": false
+  },
+  "rulesDirectory": []
 }

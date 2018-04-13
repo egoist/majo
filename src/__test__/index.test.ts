@@ -3,23 +3,23 @@ import majo from '../'
 
 test('main', async () => {
   await majo()
-    .source('**', {baseDir: path.join(__dirname, 'fixture/source')})
-    .dest('./output', {baseDir: __dirname})
+    .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
+    .dest('./output', { baseDir: __dirname })
 })
 
 test('middleware', async () => {
   const stream = majo()
-    .source('**', {baseDir: path.join(__dirname, 'fixture/source')})
-    .use(({files}) => {
+    .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
+    .use(({ files }) => {
       Object.keys(files).forEach(filename => {
         if (/\.js$/.test(filename)) {
           files[filename].contents = Buffer.from(filename)
         }
       })
     })
-    .use(({files}) => {
+    .use(({ files }) => {
       const contents = files['tmp.js'].contents.toString()
-      files['tmp.js'].contents = Buffer.from(contents.replace('\'a\'', '\'aaa\''))
+      files['tmp.js'].contents = Buffer.from(contents.replace("'a'", "'aaa'"))
     })
 
   await stream.process()
@@ -31,7 +31,7 @@ test('filter', async () => {
   const stream = majo()
 
   stream
-    .source('**', {baseDir: path.join(__dirname, 'fixture/source')})
+    .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
     .filter(filepath => {
       return filepath !== 'should-filter.js'
     })
@@ -45,7 +45,7 @@ test('filter', async () => {
 test('stats', async () => {
   const stream = majo()
 
-  stream.source('**/*.md', {baseDir: path.join(__dirname, 'fixture/stats')})
+  stream.source('**/*.md', { baseDir: path.join(__dirname, 'fixture/stats') })
 
   await stream.process()
 

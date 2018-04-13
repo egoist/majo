@@ -1,5 +1,5 @@
-import {Stats} from 'fs'
-import {readFile, remove, writeFile, ensureDir} from 'fs-extra'
+import { Stats } from 'fs'
+import { readFile, remove, writeFile, ensureDir } from 'fs-extra'
 import globby from 'globby'
 import path from 'path'
 import Wares from './wares'
@@ -33,7 +33,10 @@ export class Majo {
     this.meta = {}
   }
 
-  public source(source: string | string[], {baseDir = '.', dotFiles = true} = {}) {
+  public source(
+    source: string | string[],
+    { baseDir = '.', dotFiles = true } = {}
+  ) {
     this.baseDir = path.resolve(baseDir)
     this.sourcePatterns = source
     this.dotFiles = dotFiles
@@ -49,13 +52,13 @@ export class Majo {
 
   public async process() {
     const statCache: {
-      [relative: string]: Stats;
+      [relative: string]: Stats
     } = {}
     const paths = await globby(this.sourcePatterns, {
       cwd: this.baseDir,
       dot: this.dotFiles,
       nodir: true,
-      statCache,
+      statCache
     })
 
     this.files = {}
@@ -67,10 +70,10 @@ export class Majo {
         return readFile(absolutePath).then(contents => {
           const stats =
             statCache[path.isAbsolute(this.baseDir) ? absolutePath : relative]
-          const file = {contents, stats, path: absolutePath}
+          const file = { contents, stats, path: absolutePath }
           this.files[relative] = file
         })
-      }),
+      })
     )
 
     await new Wares().use(this.middlewares).run(this)
@@ -97,7 +100,7 @@ export class Majo {
     return this
   }
 
-  public async dest(dest: string, {baseDir = '.', clean = false} = {}) {
+  public async dest(dest: string, { baseDir = '.', clean = false } = {}) {
     const destPath = path.resolve(baseDir, dest)
     const files = await this.process()
 
@@ -107,12 +110,13 @@ export class Majo {
 
     await Promise.all(
       Object.keys(files).map(async filename => {
-        const {contents} = files[filename]
+        const { contents } = files[filename]
         const target = path.join(destPath, filename)
 
-        return ensureDir(path.dirname(target))
-          .then(async () => writeFile(target, contents))
-      }),
+        return ensureDir(path.dirname(target)).then(async () =>
+          writeFile(target, contents)
+        )
+      })
     )
   }
 
@@ -136,7 +140,7 @@ export class Majo {
 
   public deleteFile(relative: string) {
     // tslint:disable-next-line
-    delete this.files[relative];
+    delete this.files[relative]
 
     return this
   }
