@@ -1,4 +1,5 @@
-import fs from 'fs-extra'
+import {Stats} from 'fs'
+import {readFile, remove, writeFile, ensureDir} from 'fs-extra'
 import globby from 'globby'
 import path from 'path'
 import Wares from './wares'
@@ -11,7 +12,7 @@ export interface IFiles {
 
 export interface IFile {
   contents: Buffer
-  stats: fs.Stats
+  stats: Stats
   path: string
 }
 
@@ -48,7 +49,7 @@ export class Majo {
 
   public async process() {
     const statCache: {
-      [relative: string]: fs.Stats;
+      [relative: string]: Stats;
     } = {}
     const paths = await globby(this.sourcePatterns, {
       cwd: this.baseDir,
@@ -63,7 +64,7 @@ export class Majo {
       paths.map(async relative => {
         const absolutePath = path.resolve(this.baseDir, relative)
 
-        return fs.readFile(absolutePath).then(contents => {
+        return readFile(absolutePath).then(contents => {
           const stats =
             statCache[path.isAbsolute(this.baseDir) ? absolutePath : relative]
           const file = {contents, stats, path: absolutePath}
@@ -101,7 +102,7 @@ export class Majo {
     const files = await this.process()
 
     if (clean) {
-      await fs.remove(destPath)
+      await remove(destPath)
     }
 
     await Promise.all(
@@ -109,9 +110,8 @@ export class Majo {
         const {contents} = files[filename]
         const target = path.join(destPath, filename)
 
-        return fs
-          .ensureDir(path.dirname(target))
-          .then(async () => fs.writeFile(target, contents))
+        return ensureDir(path.dirname(target))
+          .then(async () => writeFile(target, contents))
       }),
     )
   }
