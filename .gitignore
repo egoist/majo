@@ -4,3 +4,5 @@ node_modules
 dist/
 output
 examples/*/yarn.lock
+.rpt2_cache
+types/index.d.ts

@@ -1,0 +1,10 @@
+{
+    "defaultSeverity": "error",
+    "extends": "tslint-xo/space",
+    "jsRules": {},
+    "rules": {
+      "no-reference": false,
+      "semicolon": [true, "never"]
+    },
+    "rulesDirectory": []
+}
