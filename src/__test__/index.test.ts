@@ -19,7 +19,7 @@ test('middleware', async () => {
     })
     .use(({ files }) => {
       const contents = files['tmp.js'].contents.toString()
-      files['tmp.js'].contents = Buffer.from(contents.replace("'a'", "'aaa'"))
+      files['tmp.js'].contents = Buffer.from(contents.replace('\'a\'', '\'aaa\''))
     })
 
   await stream.process()
