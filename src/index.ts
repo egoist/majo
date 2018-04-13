@@ -82,7 +82,7 @@ export class Majo {
       Object.keys(context.files).forEach(relative => {
         if (!fn(relative, context.files[relative])) {
           // tslint:disable-next-line
-          delete context.files[relative];
+          delete context.files[relative]
         }
       })
     })
