@@ -4,7 +4,8 @@
     "jsRules": {},
     "rules": {
       "no-reference": false,
-      "semicolon": [true, "never"]
+      "semicolon": [true, "never"],
+      "promise-function-async": false
     },
     "rulesDirectory": []
 }

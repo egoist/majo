@@ -1,10 +1,9 @@
-/// <reference path="../declarations.d.ts" />
 import fs from 'fs-extra'
 import globby from 'globby'
 import path from 'path'
-import ware, {Next} from 'ware'
+import Wares from './wares'
 
-export type Middleware = (stream: Majo, next: Next) => any | Promise<any>
+export type Middleware = (stream: Majo) => any
 
 export interface IFiles {
   [relative: string]: IFile
@@ -73,15 +72,7 @@ export class Majo {
       }),
     )
 
-    await new Promise((resolve, reject) => {
-      ware().use(this.middlewares).run(this, err => {
-        if (err) {
-          return reject(err)
-        }
-
-        resolve()
-      })
-    })
+    await new Wares().use(this.middlewares).run(this)
 
     return this.files
   }
