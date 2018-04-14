@@ -236,3 +236,5 @@ export default majo
 
 // For CommonJS default export support
 module.exports = majo
+// So that const majo = require('majo').default works too
+module.exports.default = majo
