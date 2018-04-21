@@ -16,13 +16,6 @@
     "lint": "xo",
     "build": "bili"
   },
-  "bili": {
-    "buble": {
-      "target": {
-        "node": 4
-      }
-    }
-  },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
   "jest": {
