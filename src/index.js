@@ -194,4 +194,9 @@ class Majo {
   }
 }
 
-export default () => new Majo()
+const majo = () => new Majo()
+
+majo.glob = glob
+majo.fs = fs
+
+export default majo
