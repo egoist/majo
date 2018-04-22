@@ -1,10 +1,12 @@
 import path from 'path'
+import { EventEmitter } from 'events'
 import fs from 'fs-extra'
 import glob from 'fast-glob'
 import Wares from './wares'
 
-class Majo {
+class Majo extends EventEmitter {
   constructor() {
+    super()
     /**
      * @typedef {(ctx: Majo) => Promise<void> | void} Middleware
      * @type {Middleware[]} */
@@ -120,6 +122,7 @@ class Majo {
       Object.keys(this.files).map(filename => {
         const { contents } = this.files[filename]
         const target = path.join(destPath, filename)
+        this.emit('write', filename, target)
         return fs
           .ensureDir(path.dirname(target))
           .then(() => fs.writeFile(target, contents))
