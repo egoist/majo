@@ -25,11 +25,11 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.44",
-    "@babel/preset-env": "^7.0.0-beta.44",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^22.4.3",
-    "bili": "^3.1.0",
+    "bili": "^3.3.0",
     "buble": "^0.15.2",
     "eslint-config-rem": "^3.0.0",
     "jest-cli": "^22.4.3",
@@ -37,7 +37,6 @@
   },
   "xo": {
     "extends": "rem",
-    "esnext": true,
     "envs": [
       "jest"
     ],
@@ -51,7 +50,7 @@
     }
   },
   "dependencies": {
-    "fast-glob": "^2.2.0",
-    "fs-extra": "^3.0.1"
+    "fast-glob": "^2.2.3",
+    "fs-extra": "^7.0.0"
   }
 }
