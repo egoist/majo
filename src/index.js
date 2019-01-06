@@ -1,17 +1,8 @@
 import path from 'path'
 import { EventEmitter } from 'events'
-import fs from 'fs'
-import { promisify } from 'util'
+import fs from 'fs-extra'
 import glob from 'fast-glob'
-import mkdirp from 'mkdirp'
 import Wares from './wares'
-
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
-const ensureDir = promisify(mkdirp)
-const removeDir = promisify(fs.rmdir)
-const outputFile = (file, content, enc) =>
-  ensureDir(path.dirname(file)).then(() => writeFile(file, content, enc))
 
 class Majo extends EventEmitter {
   constructor() {
@@ -69,7 +60,7 @@ class Majo extends EventEmitter {
     await Promise.all(
       allStats.map(stats => {
         const absolutePath = path.resolve(this.baseDir, stats.path)
-        return readFile(absolutePath).then(contents => {
+        return fs.readFile(absolutePath).then(contents => {
           const file = { contents, stats, path: absolutePath }
           this.files[stats.path] = file
         })
@@ -124,7 +115,7 @@ class Majo extends EventEmitter {
     await this.process()
 
     if (clean) {
-      await removeDir(destPath)
+      await fs.remove(destPath)
     }
 
     await Promise.all(
@@ -132,7 +123,9 @@ class Majo extends EventEmitter {
         const { contents } = this.files[filename]
         const target = path.join(destPath, filename)
         this.emit('write', filename, target)
-        return outputFile(target, contents)
+        return fs
+          .ensureDir(path.dirname(target))
+          .then(() => fs.writeFile(target, contents))
       })
     )
 
@@ -207,10 +200,6 @@ class Majo extends EventEmitter {
 const majo = () => new Majo()
 
 majo.glob = glob
-majo.readFile = readFile
-majo.writeFile = writeFile
-majo.ensureDir = ensureDir
-majo.outputFile = outputFile
-majo.removeDir = removeDir
+majo.fs = fs
 
 export default majo

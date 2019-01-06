@@ -14,7 +14,7 @@
     "test": "npm run lint && jest",
     "prepublishOnly": "npm run build",
     "lint": "xo",
-    "build": "bili --inline --external fast-glob"
+    "build": "bili"
   },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
@@ -23,9 +23,6 @@
     "testPathIgnorePatterns": [
       "/examples/"
     ]
-  },
-  "engines": {
-    "node": ">=8"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -36,7 +33,6 @@
     "buble": "^0.15.2",
     "eslint-config-rem": "^3.0.0",
     "jest-cli": "^22.4.3",
-    "mkdirp": "^0.5.1",
     "xo": "^0.18.0"
   },
   "xo": {
@@ -54,6 +50,7 @@
     }
   },
   "dependencies": {
-    "fast-glob": "^2.2.3"
+    "fast-glob": "^2.2.3",
+    "fs-extra": "^7.0.0"
   }
 }
