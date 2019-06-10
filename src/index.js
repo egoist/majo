@@ -195,6 +195,17 @@ class Majo extends EventEmitter {
   get fileList() {
     return Object.keys(this.files).sort()
   }
+
+  rename(fromPath, toPath) {
+    const file = this.files[fromPath]
+    this.createFile(toPath, {
+      path: path.resolve(this.baseDir, toPath),
+      stats: file.stats,
+      contents: file.contents
+    })
+    this.deleteFile(fromPath)
+    return this
+  }
 }
 
 const majo = () => new Majo()

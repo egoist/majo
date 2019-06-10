@@ -52,3 +52,17 @@ test('stats', async () => {
 
   expect(typeof stream.files['foo.md'].stats).toBe('object')
 })
+
+test('rename', async () => {
+  const stream = majo()
+
+  stream.source('**/*', { baseDir: path.join(__dirname, 'fixture/rename') })
+
+  stream.use(ctx => {
+    ctx.rename('a.txt', 'b/c.txt')
+  })
+
+  await stream.process()
+
+  expect(stream.fileList).toEqual(['b/c.txt'])
+})

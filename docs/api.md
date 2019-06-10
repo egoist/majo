@@ -165,3 +165,7 @@ Write decoded contents to a file by given relative path.
 ## stream.fileStats(relative)
 
 Get stats for a file by given relative path.
+
+## stream.rename(fromPath, toPath)
+
+Rename a file.
