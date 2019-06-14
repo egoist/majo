@@ -20,25 +20,23 @@
   },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
-  "jest": {
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/examples/"
-    ]
-  },
+
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-typescript": "^7.3.3",
     "@types/fs-extra": "^5.0.0",
+    "@types/jest": "^24.0.14",
     "@types/node": "^8.5.7",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^22.4.3",
     "bili": "^3.3.0",
     "buble": "^0.15.2",
     "eslint-config-rem": "^3.0.0",
+    "jest": "^24.8.0",
     "jest-cli": "^22.4.3",
     "rollup-plugin-typescript": "^0.8.1",
+    "ts-jest": "^24.0.2",
     "typedoc": "^0.14.2",
     "typedoc-plugin-markdown": "^1.2.1",
     "typedoc-plugin-no-inherit": "^1.1.8",
