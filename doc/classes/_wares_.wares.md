@@ -2,6 +2,8 @@
 
 # Class: Wares
 
+make this class @external
+
 ## Hierarchy
 
 **Wares**
@@ -31,7 +33,7 @@
 
 ⊕ **new Wares**(): [Wares](_wares_.wares.md)
 
-*Defined in wares.ts:4*
+*Defined in [wares.ts:8](https://github.com/janat08/majo/blob/4f1b677/src/wares.ts#L8)*
 
 **Returns:** [Wares](_wares_.wares.md)
 
@@ -45,7 +47,7 @@ ___
 
 **● middlewares**: *[Middleware](../modules/_index_.md#middleware)[]*
 
-*Defined in wares.ts:4*
+*Defined in [wares.ts:8](https://github.com/janat08/majo/blob/4f1b677/src/wares.ts#L8)*
 
 ___
 
@@ -57,7 +59,7 @@ ___
 
 ▸ **run**(context: *`any`*): `Promise`<`void`>
 
-*Defined in wares.ts:15*
+*Defined in [wares.ts:19](https://github.com/janat08/majo/blob/4f1b677/src/wares.ts#L19)*
 
 **Parameters:**
 
@@ -74,7 +76,7 @@ ___
 
 ▸ **use**(middleware: *[Middleware](../modules/_index_.md#middleware)[]*): `this`
 
-*Defined in wares.ts:9*
+*Defined in [wares.ts:13](https://github.com/janat08/majo/blob/4f1b677/src/wares.ts#L13)*
 
 **Parameters:**
 

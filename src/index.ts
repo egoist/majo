@@ -9,7 +9,7 @@ type Glob = string | string[]
 type TransformFn = (contents: string) => Promise<string> | string
 //@typedef {(ctx: Majo) => Promise<void> | void} Middleware
 //source() opts have defaults and are not required
-interface Majo {
+export interface Majo {
   meta: {[k: string]: any}
   baseDir: string
   sourcePatterns: Glob
@@ -20,10 +20,9 @@ interface Majo {
 type File = {path: string, stats: fs.Stats, contents: Buffer}
 
 /**
- * My custom event emitter
- * @noInheritDoc
+ * @noInheritDoc 
  */
-class Majo extends EventEmitter {
+export class Majo extends EventEmitter {
   constructor() {
     super()
     this.middlewares = []

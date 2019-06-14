@@ -2,8 +2,6 @@
 
 # Class: Majo
 
-My custom event emitter
-
 ## Hierarchy
 
  `EventEmitter`
@@ -55,7 +53,7 @@ My custom event emitter
 
 ⊕ **new Majo**(): [Majo](_index_.majo.md)
 
-*Defined in [index.ts:26](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L26)*
+*Defined in [index.ts:31](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L31)*
 
 **Returns:** [Majo](_index_.majo.md)
 
@@ -69,7 +67,7 @@ ___
 
 **● baseDir**: *`string`*
 
-*Defined in [index.ts:14](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L14)*
+*Defined in [index.ts:18](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L18)*
 
 ___
 <a id="dotfiles"></a>
@@ -78,7 +76,7 @@ ___
 
 **● dotFiles**: *`boolean`*
 
-*Defined in [index.ts:16](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L16)*
+*Defined in [index.ts:20](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L20)*
 
 ___
 <a id="files"></a>
@@ -87,7 +85,7 @@ ___
 
 **● files**: *`object`*
 
-*Defined in [index.ts:18](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L18)*
+*Defined in [index.ts:22](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L22)*
 
 #### Type declaration
 
@@ -100,7 +98,7 @@ ___
 
 **● meta**: *`object`*
 
-*Defined in [index.ts:13](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L13)*
+*Defined in [index.ts:17](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L17)*
 
 #### Type declaration
 
@@ -113,7 +111,7 @@ ___
 
 **● middlewares**: *[Middleware](../modules/_index_.md#middleware)[]*
 
-*Defined in [index.ts:17](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L17)*
+*Defined in [index.ts:21](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L21)*
 
 ___
 <a id="sourcepatterns"></a>
@@ -122,7 +120,7 @@ ___
 
 **● sourcePatterns**: *[Glob](../modules/_index_.md#glob)*
 
-*Defined in [index.ts:15](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L15)*
+*Defined in [index.ts:19](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L19)*
 
 ___
 
@@ -134,7 +132,7 @@ ___
 
 **get fileList**(): `string`[]
 
-*Defined in [index.ts:207](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L207)*
+*Defined in [index.ts:212](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L212)*
 
 Get an array of sorted file paths
 
@@ -150,7 +148,7 @@ ___
 
 ▸ **createFile**(relativePath: *`string`*, file: *[File](../modules/_index_.md#file)*): `this`
 
-*Defined in [index.ts:198](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L198)*
+*Defined in [index.ts:203](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L203)*
 
 Create a new file
 
@@ -170,7 +168,7 @@ ___
 
 ▸ **deleteFile**(relativePath: *`string`*): `this`
 
-*Defined in [index.ts:188](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L188)*
+*Defined in [index.ts:193](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L193)*
 
 Delete a file
 
@@ -189,7 +187,7 @@ ___
 
 ▸ **dest**(dest: *`string`*, __namedParameters?: *`object`*): `Promise`<`this`>
 
-*Defined in [index.ts:125](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L125)*
+*Defined in [index.ts:130](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L130)*
 
 Run middlewares and write processed files to disk
 
@@ -215,7 +213,7 @@ ___
 
 ▸ **file**(relativePath: *`string`*): `object`
 
-*Defined in [index.ts:180](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L180)*
+*Defined in [index.ts:185](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L185)*
 
 Get a file by relativePath path
 
@@ -234,7 +232,7 @@ ___
 
 ▸ **fileContents**(relativePath: *`string`*): `string`
 
-*Defined in [index.ts:152](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L152)*
+*Defined in [index.ts:157](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L157)*
 
 Get file contents as a UTF-8 string
 
@@ -253,7 +251,7 @@ ___
 
 ▸ **fileStats**(relativePath: *`string`*): `Stats`
 
-*Defined in [index.ts:171](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L171)*
+*Defined in [index.ts:176](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L176)*
 
 Get the fs.Stats object of specified file
 
@@ -272,7 +270,7 @@ ___
 
 ▸ **filter**(fn: *`function`*): `this`
 
-*Defined in [index.ts:91](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L91)*
+*Defined in [index.ts:96](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L96)*
 
 Filter files
 
@@ -291,7 +289,7 @@ ___
 
 ▸ **process**(): `Promise`<`this`>
 
-*Defined in [index.ts:63](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L63)*
+*Defined in [index.ts:68](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L68)*
 
 Process middlewares against files
 
@@ -304,7 +302,7 @@ ___
 
 ▸ **rename**(fromPath: *`string`*, toPath: *`string`*): `this`
 
-*Defined in [index.ts:211](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L211)*
+*Defined in [index.ts:216](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L216)*
 
 **Parameters:**
 
@@ -322,7 +320,7 @@ ___
 
 ▸ **source**(patterns: *[Glob](../modules/_index_.md#glob)*, __namedParameters?: *`object`*): `this`
 
-*Defined in [index.ts:44](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L44)*
+*Defined in [index.ts:49](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L49)*
 
 Find files from specific directory
 
@@ -346,7 +344,7 @@ ___
 
 ▸ **transform**(relativePath: *`string`*, fn: *`function`*): `undefined` \| `Promise`<`void`>
 
-*Defined in [index.ts:106](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L106)*
+*Defined in [index.ts:111](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L111)*
 
 Transform file at given path
 
@@ -366,7 +364,7 @@ ___
 
 ▸ **use**(middleware: *[Middleware](../modules/_index_.md#middleware)*): `this`
 
-*Defined in [index.ts:55](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L55)*
+*Defined in [index.ts:60](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L60)*
 
 Use a middleware
 
@@ -385,7 +383,7 @@ ___
 
 ▸ **writeContents**(relativePath: *`string`*, string: *`string`*): `this`
 
-*Defined in [index.ts:161](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L161)*
+*Defined in [index.ts:166](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L166)*
 
 Write contents to specific file
 

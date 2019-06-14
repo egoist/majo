@@ -29,7 +29,7 @@
 
 **Ƭ File**: *`object`*
 
-*Defined in [index.ts:20](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L20)*
+*Defined in [index.ts:24](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L24)*
 
 #### Type declaration
 
@@ -46,7 +46,7 @@ ___
 
 **Ƭ Glob**: *`string` \| `string`[]*
 
-*Defined in [index.ts:8](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L8)*
+*Defined in [index.ts:12](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L12)*
 
 ___
 <a id="middleware"></a>
@@ -55,7 +55,9 @@ ___
 
 **Ƭ Middleware**: *`function`*
 
-*Defined in [index.ts:7](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L7)*
+*Defined in [index.ts:11](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L11)*
+
+*__noinheritdoc__*: 
 
 #### Type declaration
 ▸(ctx: *[Majo](../classes/_index_.majo.md)*): `Promise`<`void`> \| `void`
@@ -75,7 +77,7 @@ ___
 
 **Ƭ TransformFn**: *`function`*
 
-*Defined in [index.ts:9](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L9)*
+*Defined in [index.ts:13](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L13)*
 
 #### Type declaration
 ▸(contents: *`string`*): `Promise`<`string`> \| `string`
@@ -98,7 +100,7 @@ ___
 
 ▸ **majo**(): [Majo](../classes/_index_.majo.md)
 
-*Defined in [index.ts:223](https://github.com/janat08/majo/blob/17b9c40/src/index.ts#L223)*
+*Defined in [index.ts:228](https://github.com/janat08/majo/blob/4f1b677/src/index.ts#L228)*
 
 **Returns:** [Majo](../classes/_index_.majo.md)
 
