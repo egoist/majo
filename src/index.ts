@@ -3,7 +3,7 @@ import { EventEmitter } from 'events'
 import fs from 'fs-extra'
 import glob from 'fast-glob'
 import Wares from './wares'
-
+let STUB = 1;
 export type Middleware = (ctx: Majo) => Promise<void> | void
 type Glob = string | string[]
 type TransformFn = (contents: string) => Promise<string> | string
@@ -224,5 +224,5 @@ const majo = () => new Majo()
 
 majo.glob = glob
 majo.fs = fs
-
+STUB = 1;
 export default majo
