@@ -15,7 +15,8 @@
     "prepublishOnly": "npm run build",
     "lint": "xo",
     "build": "bili",
-    "build:doc": "typedoc --out doc src --theme markdown"
+    "build:doc": "jsdoc2md --files ./src/*.ts  --configure ./jsdoc.json > ./docs/tsApi.md",
+    "typed": "typedoc --out doc src --theme markdown"
   },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
