@@ -14,7 +14,9 @@
     "test": "npm run lint && jest",
     "prepublishOnly": "npm run build",
     "lint": "xo",
-    "build": "bili"
+    "build": "bili",
+    "build:doc": "jsdoc2md --source ./src/index.ts  --configure ./jsdoc.json > ./docs/tsApi.md",
+    "typed": "typedoc --out doc src --theme markdown"
   },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
@@ -25,15 +27,33 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/fs-extra": "^5.0.0",
+    "@types/node": "^8.5.7",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^22.4.3",
     "bili": "^3.3.0",
     "buble": "^0.15.2",
     "eslint-config-rem": "^3.0.0",
     "jest-cli": "^22.4.3",
+    "jsdoc": "^3.6.2",
+    "jsdoc-babel": "^0.5.0",
+    "jsdoc-plugin-typescript": "^2.0.1",
+    "jsdoc-to-markdown": "^5.0.0",
+    "rollup-plugin-typescript": "^0.8.1",
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^1.2.1",
+    "typedoc-plugin-no-inherit": "^1.1.8",
+    "typescript": "^3.5.2",
     "xo": "^0.18.0"
+  },
+  "bili": {
+    "input": "src/index.ts",
+    "js": "typescript",
+    "filename": "majo.js"
   },
   "xo": {
     "extends": "rem",

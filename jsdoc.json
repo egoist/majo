@@ -1,0 +1,34 @@
+{
+    "plugins": [
+        "plugins/markdown",
+        "node_modules/jsdoc-babel"
+      ],
+    "typescript": {
+        "moduleRoot": "src"
+    },
+    "recurseDepth": 10,
+    "source": {
+        "include": [
+            "src"
+        ],
+        "includePattern": ".+\\.ts?$"
+    },
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": [
+            "jsdoc",
+            "closure"
+        ]
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "babel": {
+        "extensions": ["ts", "tsx"],
+        "ignore": ["**/*.(test|spec).ts"],
+        "babelrc": false,
+        "presets": [["@babel/preset-env", { "targets": { "node": true } }], "@babel/preset-typescript"]
+      }
+}
