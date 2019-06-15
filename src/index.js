@@ -16,6 +16,9 @@ class Majo extends EventEmitter {
      * @type {{[k: string]: any}}
      */
     this.meta = {}
+    this.baseDir = []
+    this.sourcePatterns = []
+    this.dotFiles = []
   }
 
   /**
@@ -26,9 +29,10 @@ class Majo extends EventEmitter {
    * @param opts.dotFiles Including dot files
    */
   source(patterns, { baseDir = '.', dotFiles = true } = {}) {
-    this.baseDir = path.resolve(baseDir)
-    this.sourcePatterns = patterns
-    this.dotFiles = dotFiles
+    this.currentDir = path.resolve('.')
+    this.baseDir.push(path.resolve(baseDir))
+    this.sourcePatterns.push(patterns)
+    this.dotFiles.push(dotFiles)
     return this
   }
 
@@ -45,11 +49,22 @@ class Majo extends EventEmitter {
    * Process middlewares against files
    */
   async process() {
-    const allStats = await glob(this.sourcePatterns, {
-      cwd: this.baseDir,
-      dot: this.dotFiles,
-      stats: true
-    })
+    const { baseDir, dotFiles, sourcePatterns } = this
+    const allStats = await Promise.all(sourcePatterns.map((x, i) => {
+      return glob(x, {
+        cwd: baseDir[i],
+        dot: dotFiles[i],
+        stats: true
+      })
+    }))
+
+    const flattened = allStats.reduce((a, set, i) => {
+      set.forEach(x => {
+        x.absPath = path.resolve(baseDir[i], x.path)
+        a.push(x)
+      })
+      return a
+    }, [])
 
     /**
      * @typedef {{path: string, stats: fs.Stats, contents: Buffer}} File
@@ -58,10 +73,10 @@ class Majo extends EventEmitter {
     this.files = {}
 
     await Promise.all(
-      allStats.map(stats => {
-        const absolutePath = path.resolve(this.baseDir, stats.path)
-        return fs.readFile(absolutePath).then(contents => {
-          const file = { contents, stats, path: absolutePath }
+      flattened.map(stats => {
+        const { absPath } = stats
+        return fs.readFile(absPath).then(contents => {
+          const file = { contents, stats, path: absPath }
           this.files[stats.path] = file
         })
       })
@@ -199,7 +214,7 @@ class Majo extends EventEmitter {
   rename(fromPath, toPath) {
     const file = this.files[fromPath]
     this.createFile(toPath, {
-      path: path.resolve(this.baseDir, toPath),
+      path: file.path,
       stats: file.stats,
       contents: file.contents
     })
