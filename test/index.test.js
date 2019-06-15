@@ -76,6 +76,7 @@ test('double source', async () => {
   await stream.process()
 
   expect(stream.files['bar.md']).toBeDefined()
+  expect(stream.files['foo.md']).toBeDefined()
 })
 
 test.skip('duplicates not overwritten with double source', async () => {
