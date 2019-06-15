@@ -6,6 +6,8 @@ const stream = majo()
 
 ## stream.source(globs, [options])
 
+May be used multiple times before processing, but will simply console warn if multiple files under the same name are found returning only the last found.
+
 ### globs
 
 Type: `Array` `string`<br>

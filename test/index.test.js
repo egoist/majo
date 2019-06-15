@@ -66,3 +66,26 @@ test('rename', async () => {
 
   expect(stream.fileList).toEqual(['b/c.txt'])
 })
+
+test('double source', async () => {
+  const stream = majo()
+
+  stream.source('**/*.md', { baseDir: path.join(__dirname, 'fixture/doubleSource') })
+  stream.source('**/*.md', { baseDir: path.join(__dirname, 'fixture/stats') })
+
+  await stream.process()
+
+  expect(stream.files['bar.md']).toBeDefined()
+  expect(stream.files['foo.md']).toBeDefined()
+})
+
+test.skip('duplicates not overwritten with double source', async () => {
+  const stream = majo()
+
+  stream.source('**/foo.md', { baseDir: path.join(__dirname, 'fixture/doubleSource') })
+  stream.source('**/foo.md', { baseDir: path.join(__dirname, 'fixture/stats') })
+
+  await stream.process()
+
+  // foo from different dirs
+})
