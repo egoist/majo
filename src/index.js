@@ -77,6 +77,9 @@ class Majo extends EventEmitter {
         const { absPath } = stats
         return fs.readFile(absPath).then(contents => {
           const file = { contents, stats, path: absPath }
+          if (typeof this.files[stats.path] !== 'undefined') {
+            console.warn('majo has encountered duplicate relative path and has overwritten initial one due duplicate sources for: ' + stats.path)
+          }
           this.files[stats.path] = file
         })
       })
