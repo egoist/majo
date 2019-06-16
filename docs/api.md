@@ -69,33 +69,6 @@ Clean destination directory before writing files.
 
 Like `stream.dest` but does not write any files.
 
-## stream.files
-
-After you called `stream.process()` or `stream.dest()`, the `stream.files` will be an object whose each entry is a file path:
-
-```js
-{
-  'src/index.js': {
-    contents: Buffer<...>,
-    stats: {}, // an fs.Stats object
-    path: '/absolute/path/to/src/index.js'
-  }
-}
-```
-
-## stream.fileList
-
-A getter which returns an array of relative paths to resulting files, eg:
-
-```js
-[
-  '.gitignore',
-  'src/index.js'
-]
-```
-
-This is sorted by default using `Array.prototype.sort`.
-
 ## stream.filter(handler)
 
 ### handler(relative, file)
@@ -124,3 +97,30 @@ Type: `Object`<br>
 Default: `{}`
 
 An object which is shared across middlewares, you can use this to pass down data to middlewares.
+
+## stream.files
+
+After you called `stream.process()` or `stream.dest()`, the `stream.files` will be an object whose each entry is a file path:
+
+```js
+{
+  'src/index.js': {
+    contents: Buffer<...>,
+    stats: {}, // an fs.Stats object
+    path: '/absolute/path/to/src/index.js'
+  }
+}
+```
+
+## stream.fileList
+
+A getter which returns an array of relative paths to resulting files, eg:
+
+```js
+[
+  '.gitignore',
+  'src/index.js'
+]
+```
+
+This is sorted by default using `Array.prototype.sort`.

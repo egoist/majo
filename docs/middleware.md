@@ -7,13 +7,25 @@ function myMiddleware(majoFiles) {
   majoFiles.deleteFile('dist/bundle.js') // Remove a file
 }
 ```
+## majoFiles.fileList
+
+A getter which returns an array of relative paths to resulting files, eg:
+
+```js
+[
+  '.gitignore',
+  'src/index.js'
+]
+```
+
+This is sorted by default using `Array.prototype.sort`.
 
 ## majoFiles.meta
 
 Type: `Object`<br>
 Default: `{}`
 
-An object which is shared across middlewares, you can use this to pass down data to middlewares.
+An object which is passed from `Majo` and shared shared across middlewares, you can use this to pass data between middlewares.
 
 ## majoFiles.transform(relative, handler)
 
@@ -73,16 +85,3 @@ An object whose each property is a file path:
   }
 }
 ```
-
-## majoFiles.fileList
-
-A getter which returns an array of relative paths to resulting files, eg:
-
-```js
-[
-  '.gitignore',
-  'src/index.js'
-]
-```
-
-This is sorted by default using `Array.prototype.sort`.
