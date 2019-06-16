@@ -6,8 +6,19 @@ import Wares from './wares'
 
 class MajoFiles {
   constructor(majo, files, meta) {
+    /**
+     * @type {Majo}
+     */
     this.majo = majo
+    /**
+     * @typedef {{path: string, stats: fs.Stats, contents: Buffer}} File
+     * @type {{[relativePath: string]: File}}
+     */
     this.files = files
+    /**
+     * An object you can use across middleware to share states
+     * @type {{[k: string]: any}}
+     */
     this.meta = meta
   }
 
@@ -92,12 +103,21 @@ class MajoFiles {
     return Object.keys(this.files).sort()
   }
 
+  /**
+   * Rename file
+   * @param {string} fromPath
+   * @param {string} toPath
+   */
   rename(fromPath, toPath) {
     this.createFile(toPath, this.files[fromPath])
     this.deleteFile(fromPath)
     return this
   }
 
+  /**
+   * Write all current resuting files
+   * @param {string} destPath
+   */
   async writeToPath(destPath) {
     await Promise.all(
       Object.keys(this.files).map(filename => {
@@ -159,10 +179,6 @@ class Majo extends EventEmitter {
       stats: true
     })
 
-    /**
-     * @typedef {{path: string, stats: fs.Stats, contents: Buffer}} File
-     * @type {{[relativePath: string]: File}}
-     */
     const files = {}
 
     await Promise.all(
@@ -174,10 +190,17 @@ class Majo extends EventEmitter {
       })
     )
 
+    /**
+     * @type {MajoFiles}
+     */
     this.majoFiles = new MajoFiles(this, files, this.meta)
 
     await new Wares().use(this.middlewares).run(this.majoFiles)
 
+    /**
+     * @typedef {{path: string, stats: fs.Stats, contents: Buffer}} File
+     * @type {{[relativePath: string]: File}}
+     */
     this.files = this.majoFiles.files
 
     return this
