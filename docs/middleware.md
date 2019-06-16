@@ -8,6 +8,13 @@ function myMiddleware(majoFiles) {
 }
 ```
 
+## majoFiles.meta
+
+Type: `Object`<br>
+Default: `{}`
+
+An object which is shared across middlewares, you can use this to pass down data to middlewares.
+
 ## majoFiles.transform(relative, handler)
 
 It should return a transformed `utf-8` string or a Promise which resolves such string.
@@ -52,6 +59,20 @@ Get stats for a file by given relative path.
 ## majoFiles.rename(fromPath, toPath)
 
 Rename a file.
+
+## majoFiles.files
+
+An object whose each property is a file path:
+
+```js
+{
+  'src/index.js': {
+    contents: Buffer<...>,
+    stats: {}, // an fs.Stats object
+    path: '/absolute/path/to/src/index.js'
+  }
+}
+```
 
 ## majoFiles.fileList
 
