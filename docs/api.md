@@ -71,7 +71,7 @@ Like `stream.dest` but does not write any files.
 
 ## stream.files
 
-After you called `stream.process()` or `stream.dest()`, the `stream.files` will  an object whose each entry is a file path:
+After you called `stream.process()` or `stream.dest()`, the `stream.files` will be an object whose each entry is a file path:
 
 ```js
 {
@@ -85,7 +85,7 @@ After you called `stream.process()` or `stream.dest()`, the `stream.files` will 
 
 ## stream.fileList
 
-A getter which returns an array of path to resolved files, eg:
+A getter which returns an array of relative paths to resulting files, eg:
 
 ```js
 [
@@ -123,49 +123,4 @@ An object which contains relevant file data:
 Type: `Object`<br>
 Default: `{}`
 
-An object which is shared across middlewares, you can use this to pass down data from a middleware to another.
-
-## stream.transform(relative, handler)
-
-It should return a transformed `utf-8` string or a Promise which resolves such string.
-
-### relative
-
-Relative path.
-
-### handler(decodedContents)
-
-#### decodedContents
-
-Type: `string`<br>
-Encoding: `utf-8`
-
-Decoded file content, a string in `utf-8` encoding.
-
-## stream.file(relative)
-
-Get a file by given relative path.
-
-## stream.deleteFile(relative)
-
-Delete a file by given relative path.
-
-## stream.createFile(relative, file)
-
-Create a file.
-
-## stream.fileContents(relative)
-
-Get decoded file contents by given relative path.
-
-## stream.writeContents(relative, contents)
-
-Write decoded contents to a file by given relative path.
-
-## stream.fileStats(relative)
-
-Get stats for a file by given relative path.
-
-## stream.rename(fromPath, toPath)
-
-Rename a file.
+An object which is shared across middlewares, you can use this to pass down data to middlewares.
