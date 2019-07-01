@@ -11,10 +11,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "npm run lint && jest",
+    "test": "npm run lint && npm run build && jest",
     "prepublishOnly": "npm run build",
     "lint": "xo",
-    "build": "bili"
+    "build": "bili src/index.ts"
   },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
@@ -27,16 +27,25 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@types/fs-extra": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^22.4.3",
     "bili": "^3.3.0",
     "buble": "^0.15.2",
     "eslint-config-rem": "^3.0.0",
+    "eslint-config-xo-typescript": "^0.15.0",
     "jest-cli": "^22.4.3",
-    "xo": "^0.18.0"
+    "rollup-plugin-typescript2": "^0.21.2",
+    "typescript": "^3.5.2",
+    "xo": "^0.24.0"
   },
   "xo": {
-    "extends": "rem",
+    "extends": [
+      "rem",
+      "xo-typescript"
+    ],
     "envs": [
       "jest"
     ],
@@ -46,8 +55,19 @@
       "examples/**"
     ],
     "rules": {
-      "guard-for-in": 0
-    }
+      "guard-for-in": 0,
+      "@typescript-eslint/member-naming": 0,
+      "@typescript-eslint/promise-function-async": 0,
+      "@typescript-eslint/require-array-sort-compare": 0,
+      "indent": "off",
+      "@typescript-eslint/indent": [
+        "error",
+        2
+      ]
+    },
+    "extensions": [
+      "ts"
+    ]
   },
   "dependencies": {
     "fast-glob": "^2.2.3",
