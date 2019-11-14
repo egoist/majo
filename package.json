@@ -1,6 +1,6 @@
 {
   "name": "majo",
-  "version": "1.0.0",
+  "version": "0.0.0-semantic-release",
   "description": "A minimal module to manipulate files.",
   "repository": {
     "url": "egoist/majo",
