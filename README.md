@@ -4,13 +4,13 @@
 <img src="https://ooo.0o0.ooo/2017/04/27/59016709425c9.jpg" width="300" />
 </a>
 
-*Art by [でんでんCOMIC1・こ24b](https://www.pixiv.net/member.php?id=12192)*
+_Art by [でんでん COMIC1・こ 24b](https://www.pixiv.net/member.php?id=12192)_
 
-[![NPM version](https://img.shields.io/npm/v/majo.svg?style=flat)](https://npmjs.com/package/majo) [![NPM downloads](https://img.shields.io/npm/dm/majo.svg?style=flat)](https://npmjs.com/package/majo) [![CircleCI](https://circleci.com/gh/egoist/majo/tree/master.svg?style=shield&circle-token=560404744e167900959a512d617a05ec5240616f)](https://circleci.com/gh/egoist/majo/tree/master)  [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
+[![NPM version](https://img.shields.io/npm/v/majo.svg?style=flat)](https://npmjs.com/package/majo) [![NPM downloads](https://img.shields.io/npm/dm/majo.svg?style=flat)](https://npmjs.com/package/majo) [![CircleCI](https://circleci.com/gh/egoist/majo/tree/master.svg?style=shield&circle-token=560404744e167900959a512d617a05ec5240616f)](https://circleci.com/gh/egoist/majo/tree/master) [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/egoist/donate)
 
 ## Introduction
 
-You can use *majo* to manipulate files like a pro, with a simple API whose core is only ≈ 150 SLOC.
+You can use _majo_ to manipulate files like a pro, with a simple API whose core is only ≈ 150 SLOC.
 
 ## Install
 
@@ -21,7 +21,7 @@ yarn add majo
 ## Usage
 
 ```js
-const majo = require('majo')
+const { majo } = require('majo')
 
 const stream = majo()
 
@@ -45,14 +45,13 @@ function ignoreSomeFiles(stream) {
 }
 ```
 
-## Support
+## Documentation
 
-[API docs](/docs/api.md)<br>
-[Middleware](/docs/middleware.md)
+https://majo.egoist.sh
 
 ## Used By
 
-- [SAO](https://github.com/egoist/sao): ⚔️ Futuristic scaffolding tool. 
+- [SAO](https://github.com/egoist/sao): ⚔️ Futuristic scaffolding tool.
 
 ## Contributing
 
@@ -62,10 +61,9 @@ function ignoreSomeFiles(stream) {
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
 
-
 ## Author
 
 **majo** © [egoist](https://github.com/egoist), Released under the [MIT](./LICENSE) License.<br>
 Authored and maintained by egoist with help from contributors ([list](https://github.com/egoist/majo/contributors)).
 
-> [egoist.moe](https://egoist.moe) · GitHub [@egoist](https://github.com/egoist) · Twitter [@_egoistlily](https://twitter.com/_egoistlily)
+> [egoist.moe](https://egoist.moe) · GitHub [@egoist](https://github.com/egoist) · Twitter [@\_egoistlily](https://twitter.com/_egoistlily)

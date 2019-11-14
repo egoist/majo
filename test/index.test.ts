@@ -1,23 +1,20 @@
 import path from 'path'
-import * as buble from 'buble'
-import majo from '../src'
+import { majo, fs, glob } from '../src'
 
 test('main', async () => {
-  await majo()
+  const outputDir = path.join(__dirname, 'output/main')
+  await fs.remove(outputDir)
+  const stream = await majo()
     .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
-    .dest('./output', { baseDir: __dirname })
+    .dest('./output/main', { baseDir: __dirname })
+  expect(
+    await glob('**/*', { cwd: outputDir }).then(result => result.sort())
+  ).toEqual(stream.fileList)
 })
 
 test('middleware', async () => {
   const stream = majo()
     .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
-    .use(({ files }) => {
-      for (const filename in files) {
-        if (/\.js$/.test(filename)) {
-          files[filename].contents = Buffer.from(buble.transform(files[filename].contents.toString()).code)
-        }
-      }
-    })
     .use(({ files }) => {
       const contents = files['tmp.js'].contents.toString()
       files['tmp.js'].contents = Buffer.from(contents.replace(`'a'`, `'aaa'`))
@@ -25,7 +22,7 @@ test('middleware', async () => {
 
   await stream.process()
 
-  expect(stream.fileContents('tmp.js')).toMatch(`var a = function () { return 'aaa'; }`)
+  expect(stream.fileContents('tmp.js')).toMatch(`const a = () => 'aaa'`)
 })
 
 test('filter', async () => {

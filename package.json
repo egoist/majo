@@ -6,51 +6,47 @@
     "url": "egoist/majo",
     "type": "git"
   },
-  "main": "dist/majo.cjs.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "npm run lint && jest",
+    "test": "jest",
     "prepublishOnly": "npm run build",
-    "lint": "xo",
-    "build": "bili"
+    "build": "rollup -c",
+    "format": "prettier *.{js,md,json,ts} --write",
+    "typedoc": "typedoc src --out typedoc --theme minimal --mode file --excludeExternals --excludePrivate --excludeProtected"
   },
   "author": "egoist <0x142857@gmail.com>",
   "license": "MIT",
-  "jest": {
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/examples/"
+  "lint-staged": {
+    "*.{js,md,json,ts}": [
+      "prettier --write",
+      "git add"
     ]
   },
-  "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^22.4.3",
-    "bili": "^3.3.0",
-    "buble": "^0.15.2",
-    "eslint-config-rem": "^3.0.0",
-    "jest-cli": "^22.4.3",
-    "xo": "^0.18.0"
-  },
-  "xo": {
-    "extends": "rem",
-    "envs": [
-      "jest"
-    ],
-    "ignores": [
-      "test/fixture/**",
-      "test/output/**",
-      "examples/**"
-    ],
-    "rules": {
-      "guard-for-in": 0
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
   },
+  "devDependencies": {
+    "@types/fs-extra": "^8.0.1",
+    "@types/jest": "^24.0.23",
+    "@types/node": "^12.12.7",
+    "husky": "^3.0.9",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.4.3",
+    "prettier": "^1.19.1",
+    "rollup": "^1.27.0",
+    "rollup-plugin-typescript2": "^0.25.2",
+    "ts-jest": "^24.1.0",
+    "typedoc": "^0.15.1",
+    "typescript": "^3.7.2"
+  },
   "dependencies": {
-    "fast-glob": "^2.2.3",
-    "fs-extra": "^7.0.0"
+    "fast-glob": "^3.1.0",
+    "fs-extra": "^8.1.0"
   }
 }
