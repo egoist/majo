@@ -23,4 +23,6 @@ jobs:
           command: yarn test
       - run:
           name: releae
-          command: npx shipjs trigger
+          command: >
+            echo "//registry.yarnpkg.com/:_authToken=$NPM_TOKEN" >>~/.npmrc \
+            npx shipjs trigger
