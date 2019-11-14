@@ -1,7 +1,7 @@
 {
   "name": "majo",
   "version": "1.0.0",
-  "description": "my badass project",
+  "description": "A minimal module to manipulate files.",
   "repository": {
     "url": "egoist/majo",
     "type": "git"
