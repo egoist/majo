@@ -1,9 +1,16 @@
 import path from 'path'
-import fs from 'fs-extra'
+import fs from 'fs'
+import { promisify } from 'util'
 import glob from 'fast-glob'
+import rimraf from 'rimraf'
+import mkdirp from 'mkdirp'
 import Wares from './wares'
 
 export type Middleware = (ctx: Majo) => Promise<void> | void
+
+const readFile = promisify(fs.readFile)
+const writeFile = promisify(fs.writeFile)
+const remove = promisify(rimraf)
 
 export interface File {
   /** The absolute path of the file */
@@ -113,7 +120,7 @@ export class Majo {
     await Promise.all(
       allEntries.map(entry => {
         const absolutePath = path.resolve(this.baseDir as string, entry.path)
-        return fs.readFile(absolutePath).then(contents => {
+        return readFile(absolutePath).then(contents => {
           const file = {
             contents,
             stats: entry.stats as fs.Stats,
@@ -168,7 +175,7 @@ export class Majo {
     await this.process()
 
     if (clean) {
-      await fs.remove(destPath)
+      await remove(destPath)
     }
 
     await Promise.all(
@@ -178,9 +185,9 @@ export class Majo {
         if (this.onWrite) {
           this.onWrite(filename, target)
         }
-        return fs
-          .ensureDir(path.dirname(target))
-          .then(() => fs.writeFile(target, contents))
+        return mkdirp(path.dirname(target)).then(() =>
+          writeFile(target, contents)
+        )
       })
     )
 
