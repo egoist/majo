@@ -1,9 +1,9 @@
 import path from 'path'
-import { majo, fs, glob } from '../src'
+import { majo, glob, remove } from '../src'
 
 test('main', async () => {
   const outputDir = path.join(__dirname, 'output/main')
-  await fs.remove(outputDir)
+  await remove(outputDir)
   const stream = await majo()
     .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
     .dest('./output/main', { baseDir: __dirname })

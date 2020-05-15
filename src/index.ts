@@ -3,7 +3,7 @@ import fs from 'fs'
 import { promisify } from 'util'
 import glob from 'fast-glob'
 import rimraf from 'rimraf'
-import mkdirp from 'mkdirp'
+import ensureDir from 'mkdirp'
 import Wares from './wares'
 
 export type Middleware = (ctx: Majo) => Promise<void> | void
@@ -185,7 +185,7 @@ export class Majo {
         if (this.onWrite) {
           this.onWrite(filename, target)
         }
-        return mkdirp(path.dirname(target)).then(() =>
+        return ensureDir(path.dirname(target)).then(() =>
           writeFile(target, contents)
         )
       })
@@ -271,4 +271,16 @@ export class Majo {
 
 const majo = () => new Majo()
 
-export { majo, fs, glob }
+export { majo, remove, glob, ensureDir }
+
+/**
+ * Ensure directory exists before writing file
+ */
+export const outputFile = (
+  filepath: string,
+  data: any,
+  options?: fs.WriteFileOptions
+) =>
+  ensureDir(path.dirname(filepath)).then(() =>
+    writeFile(filepath, data, options)
+  )
