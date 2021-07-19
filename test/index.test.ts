@@ -15,9 +15,10 @@ test('main', async () => {
 test('middleware', async () => {
   const stream = majo()
     .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
-    .use(({ files }) => {
-      const contents = files['tmp.js'].contents.toString()
-      files['tmp.js'].contents = Buffer.from(contents.replace(`'a'`, `'aaa'`))
+    .use(ctx => {
+      const file = ctx.file('tmp.js')
+      const contents = file.contents.toString()
+      file.contents = Buffer.from(contents.replace(`'a'`, `'aaa'`))
     })
 
   await stream.process()
@@ -47,7 +48,7 @@ test('stats', async () => {
 
   await stream.process()
 
-  expect(typeof stream.files['foo.md'].stats).toBe('object')
+  expect(typeof stream.file('foo.md').stats).toBe('object')
 })
 
 test('rename', async () => {
