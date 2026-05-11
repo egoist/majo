@@ -50,6 +50,20 @@ test('stats', async () => {
   expect(typeof stream.files['foo.md'].stats).toBe('object')
 })
 
+test('multiple source calls', async () => {
+  const stream = majo()
+
+  stream
+    .source('**/*.js', { baseDir: path.join(__dirname, 'fixture/source') })
+    .source('**/*.md', { baseDir: path.join(__dirname, 'fixture/stats') })
+
+  await stream.process()
+
+  expect(stream.fileList).toEqual(['foo.md', 'should-filter.js', 'tmp.js'])
+  expect(stream.fileContents('foo.md')).toBeTruthy()
+  expect(stream.fileContents('tmp.js')).toMatch(`const a = () => 'a'`)
+})
+
 test('rename', async () => {
   const stream = majo()
 
