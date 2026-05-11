@@ -53,6 +53,12 @@ export interface DestOptions {
   clean?: boolean
 }
 
+interface SourceEntry {
+  baseDir: string
+  patterns: string[]
+  dotFiles: boolean
+}
+
 export class Majo {
   middlewares: Middleware[]
   /**
@@ -67,6 +73,7 @@ export class Majo {
    */
   baseDir?: string
   sourcePatterns?: string[]
+  sources: SourceEntry[]
   dotFiles?: boolean
   files: {
     [filename: string]: File
@@ -77,6 +84,7 @@ export class Majo {
     this.middlewares = []
     this.meta = {}
     this.files = {}
+    this.sources = []
   }
 
   /**
@@ -90,6 +98,11 @@ export class Majo {
     const { baseDir = '.', dotFiles = true, onWrite } = options
     this.baseDir = path.resolve(baseDir)
     this.sourcePatterns = Array.isArray(patterns) ? patterns : [patterns]
+    this.sources.push({
+      baseDir: this.baseDir,
+      patterns: this.sourcePatterns,
+      dotFiles
+    })
     this.dotFiles = dotFiles
     this.onWrite = onWrite
     return this
@@ -107,30 +120,32 @@ export class Majo {
    * Process middlewares against files
    */
   async process() {
-    if (!this.sourcePatterns || !this.baseDir) {
+    if (this.sources.length === 0) {
       throw new Error(`[majo] You need to call .source first`)
     }
 
-    const allEntries = await glob(this.sourcePatterns, {
-      cwd: this.baseDir,
-      dot: this.dotFiles,
-      stats: true
-    })
-
-    await Promise.all(
-      allEntries.map(entry => {
-        const absolutePath = path.resolve(this.baseDir as string, entry.path)
-        return readFile(absolutePath).then(contents => {
-          const file = {
-            contents,
-            stats: entry.stats as fs.Stats,
-            path: absolutePath
-          }
-          // Use relative path as key
-          this.files[entry.path] = file
-        })
+    for (const source of this.sources) {
+      const allEntries = await glob(source.patterns, {
+        cwd: source.baseDir,
+        dot: source.dotFiles,
+        stats: true
       })
-    )
+
+      await Promise.all(
+        allEntries.map(entry => {
+          const absolutePath = path.resolve(source.baseDir, entry.path)
+          return readFile(absolutePath).then(contents => {
+            const file = {
+              contents,
+              stats: entry.stats as fs.Stats,
+              path: absolutePath
+            }
+            // Use relative path as key
+            this.files[entry.path] = file
+          })
+        })
+      )
+    }
 
     await new Wares().use(this.middlewares).run(this)
 
