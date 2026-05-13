@@ -50,6 +50,42 @@ test('stats', async () => {
   expect(typeof stream.files['foo.md'].stats).toBe('object')
 })
 
+test('multiple source calls', async () => {
+  const sourceDir = path.join(__dirname, 'fixture/source')
+  const statsDir = path.join(__dirname, 'fixture/stats')
+  const stream = majo()
+
+  stream
+    .source('**/*.js', { baseDir: sourceDir })
+    .source('**/*.md', { baseDir: statsDir })
+
+  await stream.process()
+
+  expect(stream.fileList).toEqual(['foo.md', 'should-filter.js', 'tmp.js'])
+  expect(stream.file('tmp.js').path).toBe(path.join(sourceDir, 'tmp.js'))
+  expect(stream.file('foo.md').path).toBe(path.join(statsDir, 'foo.md'))
+})
+
+test('rename after multiple source calls keeps original source base', async () => {
+  const firstDir = path.join(__dirname, 'fixture/multiple-source/first')
+  const secondDir = path.join(__dirname, 'fixture/multiple-source/second')
+  const stream = majo()
+
+  stream
+    .source('*.txt', { baseDir: firstDir })
+    .source('*.txt', { baseDir: secondDir })
+    .use(ctx => {
+      ctx.rename('first.txt', 'renamed/first.txt')
+    })
+
+  await stream.process()
+
+  expect(stream.fileList).toEqual(['renamed/first.txt', 'second.txt'])
+  expect(stream.file('renamed/first.txt').path).toBe(
+    path.join(firstDir, 'renamed/first.txt')
+  )
+})
+
 test('rename', async () => {
   const stream = majo()
 
