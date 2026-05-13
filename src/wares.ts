@@ -1,4 +1,4 @@
-import { Majo, Middleware } from './'
+import { MajoContext, Middleware } from './'
 
 export default class Wares {
   middlewares: Middleware[]
@@ -13,9 +13,9 @@ export default class Wares {
     return this
   }
 
-  run(context: Majo) {
-    return this.middlewares.reduce((current, next) => {
-      return current.then(() => Promise.resolve(next(context)))
+  run(context: MajoContext) {
+    return this.middlewares.reduce<Promise<void>>((current, next) => {
+      return current.then(() => Promise.resolve(next(context)).then(() => undefined))
     }, Promise.resolve())
   }
 }
