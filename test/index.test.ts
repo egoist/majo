@@ -1,5 +1,6 @@
 import path from 'path'
-import { majo, glob, remove } from '../src'
+import fs from 'fs'
+import { Majo, majo, glob, remove } from '../src'
 
 test('main', async () => {
   const outputDir = path.join(__dirname, 'output/main')
@@ -23,6 +24,108 @@ test('middleware', async () => {
   await stream.process()
 
   expect(stream.fileContents('tmp.js')).toMatch(`const a = () => 'aaa'`)
+})
+
+test('middleware context is separate from majo instance', async () => {
+  const stream = majo().source('**', {
+    baseDir: path.join(__dirname, 'fixture/source')
+  })
+
+  stream.use(context => {
+    expect(context).not.toBe(stream)
+    expect(context).not.toBeInstanceOf(Majo)
+    expect(context).not.toHaveProperty('source')
+    expect(context.fileList).toContain('tmp.js')
+  })
+
+  await stream.process()
+})
+
+test('middleware context keeps source state', async () => {
+  const baseDir = path.join(__dirname, 'fixture/source')
+  const onWrite = jest.fn()
+  const nextOnWrite = jest.fn()
+  const stream = majo().source('**', {
+    baseDir,
+    dotFiles: false,
+    onWrite
+  })
+
+  stream.use(context => {
+    expect(context.baseDir).toBe(path.resolve(baseDir))
+    expect(context.sourcePatterns).toEqual(['**'])
+    expect(context.dotFiles).toBe(false)
+    expect(context.onWrite).toBe(onWrite)
+
+    context.meta = { changed: true }
+    context.onWrite = nextOnWrite
+  })
+
+  await stream.process()
+
+  expect(stream.meta).toEqual({ changed: true })
+
+  await stream.dest('./output/context-state', { baseDir: __dirname })
+
+  expect(onWrite).not.toHaveBeenCalled()
+  expect(nextOnWrite).toHaveBeenCalled()
+})
+
+test('middleware context supports filtering files', async () => {
+  const stream = majo().source('**', {
+    baseDir: path.join(__dirname, 'fixture/source')
+  })
+
+  stream.use(context => {
+    context.filter(filepath => filepath !== 'should-filter.js')
+  })
+
+  await stream.process()
+
+  expect(stream.fileList).toContain('tmp.js')
+  expect(stream.fileList).not.toContain('should-filter.js')
+})
+
+test('queued file operations can read reassigned stream meta', async () => {
+  const stream = majo().source('**', {
+    baseDir: path.join(__dirname, 'fixture/source')
+  })
+
+  stream.use(context => {
+    context.meta = { keepFilterFixture: true }
+  })
+
+  stream.filter(filepath => {
+    return filepath !== 'should-filter.js' || stream.meta.keepFilterFixture
+  })
+
+  await stream.process()
+
+  expect(stream.fileList).toContain('should-filter.js')
+})
+
+test('file operations can be called before processing', async () => {
+  const baseDir = path.join(__dirname, 'fixture/source')
+  const stream = majo().source('**', {
+    baseDir
+  })
+
+  stream.transform('tmp.js', contents => contents.replace(`'a'`, `'bbb'`))
+  stream.rename('tmp.js', 'renamed/tmp.js')
+  stream.writeContents('should-filter.js', 'module.exports = true\n')
+  stream.createFile('created.txt', {
+    path: path.join(baseDir, 'created.txt'),
+    stats: fs.statSync(path.join(baseDir, 'tmp.js')),
+    contents: Buffer.from('created')
+  })
+  stream.deleteFile('should-filter.js')
+
+  await stream.process()
+
+  expect(stream.fileContents('renamed/tmp.js')).toMatch(`const a = () => 'bbb'`)
+  expect(stream.fileContents('created.txt')).toBe('created')
+  expect(stream.fileList).not.toContain('tmp.js')
+  expect(stream.fileList).not.toContain('should-filter.js')
 })
 
 test('filter', async () => {
@@ -62,4 +165,44 @@ test('rename', async () => {
   await stream.process()
 
   expect(stream.fileList).toEqual(['b/c.txt'])
+})
+
+test('rename can be called before writing to dest', async () => {
+  const outputDir = path.join(__dirname, 'output/rename')
+  await remove(outputDir)
+
+  const stream = await majo()
+    .source('**/*', { baseDir: path.join(__dirname, 'fixture/rename') })
+    .rename('a.txt', 'b/c.txt')
+    .dest('./output/rename', { baseDir: __dirname })
+
+  expect(stream.fileList).toEqual(['b/c.txt'])
+  expect(await glob('**/*', { cwd: outputDir })).toEqual(['b/c.txt'])
+})
+
+test('file operations can be called after processing', async () => {
+  const outputDir = path.join(__dirname, 'output/post-process')
+  await remove(outputDir)
+
+  const stream = majo().source('**/*', {
+    baseDir: path.join(__dirname, 'fixture/rename')
+  })
+
+  await stream.process()
+
+  stream.createFile('b.txt', {
+    ...stream.file('a.txt'),
+    path: path.join(__dirname, 'fixture/rename/b.txt'),
+    contents: Buffer.from('b')
+  })
+  stream.rename('a.txt', 'c.txt')
+
+  expect(stream.fileList).toEqual(['b.txt', 'c.txt'])
+  expect(stream.fileContents('b.txt')).toBe('b')
+
+  await stream.dest('./output/post-process', { baseDir: __dirname })
+
+  expect(
+    await glob('**/*', { cwd: outputDir }).then(result => result.sort())
+  ).toEqual(['b.txt', 'c.txt'])
 })

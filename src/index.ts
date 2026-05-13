@@ -6,7 +6,7 @@ import rimraf from 'rimraf'
 import ensureDir from 'mkdirp'
 import Wares from './wares'
 
-export type Middleware = (ctx: Majo) => Promise<void> | void
+export type Middleware = (ctx: MajoContext) => Promise<unknown> | unknown
 
 const readFile = promisify(fs.readFile)
 const writeFile = promisify(fs.writeFile)
@@ -53,8 +53,7 @@ export interface DestOptions {
   clean?: boolean
 }
 
-export class Majo {
-  middlewares: Middleware[]
+export class MajoContext {
   /**
    * An object you can use across middleware to share states
    */
@@ -73,82 +72,10 @@ export class Majo {
   }
   onWrite?: OnWrite
 
-  constructor() {
-    this.middlewares = []
+  constructor(files: { [filename: string]: File } = {}, baseDir?: string) {
     this.meta = {}
-    this.files = {}
-  }
-
-  /**
-   * Find files from specific directory
-   * @param source Glob patterns
-   * @param opts
-   * @param opts.baseDir The base directory to find files
-   * @param opts.dotFiles Including dot files
-   */
-  source(patterns: string | string[], options: SourceOptions = {}) {
-    const { baseDir = '.', dotFiles = true, onWrite } = options
-    this.baseDir = path.resolve(baseDir)
-    this.sourcePatterns = Array.isArray(patterns) ? patterns : [patterns]
-    this.dotFiles = dotFiles
-    this.onWrite = onWrite
-    return this
-  }
-
-  /**
-   * Use a middleware
-   */
-  use(middleware: Middleware) {
-    this.middlewares.push(middleware)
-    return this
-  }
-
-  /**
-   * Process middlewares against files
-   */
-  async process() {
-    if (!this.sourcePatterns || !this.baseDir) {
-      throw new Error(`[majo] You need to call .source first`)
-    }
-
-    const allEntries = await glob(this.sourcePatterns, {
-      cwd: this.baseDir,
-      dot: this.dotFiles,
-      stats: true
-    })
-
-    await Promise.all(
-      allEntries.map(entry => {
-        const absolutePath = path.resolve(this.baseDir as string, entry.path)
-        return readFile(absolutePath).then(contents => {
-          const file = {
-            contents,
-            stats: entry.stats as fs.Stats,
-            path: absolutePath
-          }
-          // Use relative path as key
-          this.files[entry.path] = file
-        })
-      })
-    )
-
-    await new Wares().use(this.middlewares).run(this)
-
-    return this
-  }
-
-  /**
-   * Filter files
-   * @param fn Filter handler
-   */
-  filter(fn: FilterHandler) {
-    return this.use(context => {
-      for (const relativePath in context.files) {
-        if (!fn(relativePath, context.files[relativePath])) {
-          delete context.files[relativePath]
-        }
-      }
-    })
+    this.files = files
+    this.baseDir = baseDir
   }
 
   /**
@@ -156,42 +83,18 @@ export class Majo {
    * @param relativePath Relative path
    * @param fn Transform handler
    */
-  async transform(relativePath: string, fn: TransformHandler) {
+  transform(relativePath: string, fn: TransformHandler): this | Promise<this> {
     const contents = this.files[relativePath].contents.toString()
-    const newContents = await fn(contents)
-    this.files[relativePath].contents = Buffer.from(newContents)
-  }
-
-  /**
-   * Run middlewares and write processed files to disk
-   * @param dest Target directory
-   * @param opts
-   * @param opts.baseDir Base directory to resolve target directory
-   * @param opts.clean Clean directory before writing
-   */
-  async dest(dest: string, options: DestOptions = {}) {
-    const { baseDir = '.', clean = false } = options
-    const destPath = path.resolve(baseDir, dest)
-    await this.process()
-
-    if (clean) {
-      await remove(destPath)
+    const newContents = fn(contents)
+    if (typeof newContents === 'string') {
+      this.files[relativePath].contents = Buffer.from(newContents)
+      return this
     }
 
-    await Promise.all(
-      Object.keys(this.files).map(filename => {
-        const { contents } = this.files[filename]
-        const target = path.join(destPath, filename)
-        if (this.onWrite) {
-          this.onWrite(filename, target)
-        }
-        return ensureDir(path.dirname(target)).then(() =>
-          writeFile(target, contents)
-        )
-      })
-    )
-
-    return this
+    return newContents.then(contents => {
+      this.files[relativePath].contents = Buffer.from(contents)
+      return this
+    })
   }
 
   /**
@@ -229,6 +132,20 @@ export class Majo {
   }
 
   /**
+   * Filter files
+   * @param fn Filter handler
+   */
+  filter(fn: FilterHandler) {
+    for (const relativePath in this.files) {
+      if (!fn(relativePath, this.files[relativePath])) {
+        delete this.files[relativePath]
+      }
+    }
+
+    return this
+  }
+
+  /**
    * Delete a file
    * @param relativePath Relative path
    */
@@ -259,12 +176,212 @@ export class Majo {
       return this
     }
     const file = this.files[fromPath]
-    this.createFile(toPath, {
+    this.files[toPath] = {
       path: path.resolve(this.baseDir, toPath),
       stats: file.stats,
       contents: file.contents
+    }
+    delete this.files[fromPath]
+    return this
+  }
+}
+
+export class Majo extends MajoContext {
+  middlewares: Middleware[]
+  private processed: boolean
+
+  constructor() {
+    super()
+    this.middlewares = []
+    this.processed = false
+  }
+
+  /**
+   * Find files from specific directory
+   * @param source Glob patterns
+   * @param opts
+   * @param opts.baseDir The base directory to find files
+   * @param opts.dotFiles Including dot files
+   */
+  source(patterns: string | string[], options: SourceOptions = {}) {
+    const { baseDir = '.', dotFiles = true, onWrite } = options
+    this.baseDir = path.resolve(baseDir)
+    this.sourcePatterns = Array.isArray(patterns) ? patterns : [patterns]
+    this.dotFiles = dotFiles
+    this.onWrite = onWrite
+    this.files = {}
+    this.processed = false
+    return this
+  }
+
+  /**
+   * Use a middleware
+   */
+  use(middleware: Middleware) {
+    this.middlewares.push(middleware)
+    return this
+  }
+
+  private mutate(fn: (context: MajoContext) => unknown) {
+    if (this.processed) {
+      fn(this)
+      return this
+    }
+    return this.use(context => {
+      this.syncFromContext(context)
+      return fn(context)
     })
-    this.deleteFile(fromPath)
+  }
+
+  private syncFromContext(context: MajoContext) {
+    this.files = context.files
+    this.meta = context.meta
+    this.baseDir = context.baseDir
+    this.sourcePatterns = context.sourcePatterns
+    this.dotFiles = context.dotFiles
+    this.onWrite = context.onWrite
+  }
+
+  /**
+   * Filter files
+   * @param fn Filter handler
+   */
+  filter(fn: FilterHandler) {
+    return this.mutate(context => context.filter(fn))
+  }
+
+  /**
+   * Transform file at given path
+   * @param relativePath Relative path
+   * @param fn Transform handler
+   */
+  transform(relativePath: string, fn: TransformHandler) {
+    if (this.processed) {
+      return super.transform(relativePath, fn)
+    }
+    return this.mutate(context => context.transform(relativePath, fn))
+  }
+
+  /**
+   * Write contents to specific file
+   * @param relativePath Relative path
+   * @param string File content as a UTF-8 string
+   */
+  writeContents(relativePath: string, contents: string) {
+    if (this.processed) {
+      return super.writeContents(relativePath, contents)
+    }
+    return this.mutate(context => context.writeContents(relativePath, contents))
+  }
+
+  /**
+   * Delete a file
+   * @param relativePath Relative path
+   */
+  deleteFile(relativePath: string) {
+    if (this.processed) {
+      return super.deleteFile(relativePath)
+    }
+    return this.mutate(context => context.deleteFile(relativePath))
+  }
+
+  /**
+   * Create a new file
+   * @param relativePath Relative path
+   * @param file
+   */
+  createFile(relativePath: string, file: File) {
+    if (this.processed) {
+      return super.createFile(relativePath, file)
+    }
+    return this.mutate(context => context.createFile(relativePath, file))
+  }
+
+  rename(fromPath: string, toPath: string) {
+    if (this.processed) {
+      return super.rename(fromPath, toPath)
+    }
+    return this.mutate(context => context.rename(fromPath, toPath))
+  }
+
+  /**
+   * Process middlewares against files
+   */
+  async process() {
+    if (!this.sourcePatterns || !this.baseDir) {
+      throw new Error(`[majo] You need to call .source first`)
+    }
+
+    const allEntries = await glob(this.sourcePatterns, {
+      cwd: this.baseDir,
+      dot: this.dotFiles,
+      stats: true
+    })
+
+    const files: {
+      [filename: string]: File
+    } = {}
+
+    await Promise.all(
+      allEntries.map(entry => {
+        const absolutePath = path.resolve(this.baseDir as string, entry.path)
+        return readFile(absolutePath).then(contents => {
+          const file = {
+            contents,
+            stats: entry.stats as fs.Stats,
+            path: absolutePath
+          }
+          // Use relative path as key
+          files[entry.path] = file
+        })
+      })
+    )
+
+    const context = new MajoContext(files, this.baseDir)
+    context.meta = this.meta
+    context.sourcePatterns = this.sourcePatterns
+    context.dotFiles = this.dotFiles
+    context.onWrite = this.onWrite
+
+    await new Wares().use(this.middlewares).run(context)
+
+    this.syncFromContext(context)
+    this.processed = true
+
+    return this
+  }
+
+  /**
+   * Run middlewares and write processed files to disk
+   * @param dest Target directory
+   * @param opts
+   * @param opts.baseDir Base directory to resolve target directory
+   * @param opts.clean Clean directory before writing
+   */
+  async dest(dest: string, options: DestOptions = {}) {
+    const { baseDir = '.', clean = false } = options
+    const destPath = path.resolve(baseDir, dest)
+    if (!this.processed) {
+      await this.process()
+    }
+
+    if (clean) {
+      await remove(destPath)
+    }
+
+    await Promise.all(
+      Object.keys(this.files).map(filename => {
+        const { contents } = this.files[filename]
+        const target = path.join(destPath, filename)
+        if (this.onWrite) {
+          this.onWrite(filename, target)
+        }
+        return ensureDir(path.dirname(target)).then(() =>
+          writeFile(target, contents)
+        )
+      })
+    )
+
     return this
   }
 }
