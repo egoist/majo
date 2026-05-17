@@ -25,6 +25,13 @@ export type TransformHandler = (contents: string) => Promise<string> | string
 
 export type OnWrite = (relativePath: string, outputPath: string) => void
 
+export interface SourceEntry {
+  patterns: string[]
+  baseDir: string
+  dotFiles: boolean
+  onWrite?: OnWrite
+}
+
 export interface SourceOptions {
   /**
    * The base directory to search files from
@@ -64,10 +71,21 @@ export class Majo {
   /**
    * Base directory
    * You normally set this by calling `.source`
+   * @deprecated Use `sources` instead
    */
   baseDir?: string
+  /**
+   * @deprecated Use `sources` instead
+   */
   sourcePatterns?: string[]
+  /**
+   * @deprecated Use `sources` instead
+   */
   dotFiles?: boolean
+  /**
+   * List of source entries for multiple source support
+   */
+  sources: SourceEntry[]
   files: {
     [filename: string]: File
   }
@@ -77,21 +95,35 @@ export class Majo {
     this.middlewares = []
     this.meta = {}
     this.files = {}
+    this.sources = []
   }
 
   /**
    * Find files from specific directory
-   * @param source Glob patterns
+   * Can be called multiple times to add more sources
+   * @param patterns Glob patterns
    * @param opts
    * @param opts.baseDir The base directory to find files
    * @param opts.dotFiles Including dot files
    */
   source(patterns: string | string[], options: SourceOptions = {}) {
     const { baseDir = '.', dotFiles = true, onWrite } = options
+
+    // Add to sources array for multiple source support
+    this.sources.push({
+      patterns: Array.isArray(patterns) ? patterns : [patterns],
+      baseDir: path.resolve(baseDir),
+      dotFiles,
+      onWrite
+    })
+
+    // Keep backward compatibility by also setting these properties
+    // (last source wins for backward compatibility)
     this.baseDir = path.resolve(baseDir)
     this.sourcePatterns = Array.isArray(patterns) ? patterns : [patterns]
     this.dotFiles = dotFiles
     this.onWrite = onWrite
+
     return this
   }
 
@@ -107,30 +139,57 @@ export class Majo {
    * Process middlewares against files
    */
   async process() {
-    if (!this.sourcePatterns || !this.baseDir) {
-      throw new Error(`[majo] You need to call .source first`)
-    }
-
-    const allEntries = await glob(this.sourcePatterns, {
-      cwd: this.baseDir,
-      dot: this.dotFiles,
-      stats: true
-    })
-
-    await Promise.all(
-      allEntries.map(entry => {
-        const absolutePath = path.resolve(this.baseDir as string, entry.path)
-        return readFile(absolutePath).then(contents => {
-          const file = {
-            contents,
-            stats: entry.stats as fs.Stats,
-            path: absolutePath
-          }
-          // Use relative path as key
-          this.files[entry.path] = file
+    // Use sources array if available (multiple source support)
+    if (this.sources.length > 0) {
+      for (const source of this.sources) {
+        const allEntries = await glob(source.patterns, {
+          cwd: source.baseDir,
+          dot: source.dotFiles,
+          stats: true
         })
+
+        await Promise.all(
+          allEntries.map((entry: any) => {
+            const absolutePath = path.resolve(source.baseDir, entry.path)
+            return readFile(absolutePath).then((contents: any) => {
+              const file = {
+                contents,
+                stats: entry.stats as fs.Stats,
+                path: absolutePath
+              }
+              // Use relative path as key
+              this.files[entry.path] = file
+            })
+          })
+        )
+      }
+    } else {
+      // Fallback to old behavior for backward compatibility
+      if (!this.sourcePatterns || !this.baseDir) {
+        throw new Error(`[majo] You need to call .source first`)
+      }
+
+      const allEntries = await glob(this.sourcePatterns, {
+        cwd: this.baseDir,
+        dot: this.dotFiles,
+        stats: true
       })
-    )
+
+      await Promise.all(
+        allEntries.map((entry: any) => {
+          const absolutePath = path.resolve(this.baseDir as string, entry.path)
+          return readFile(absolutePath).then((contents: any) => {
+            const file = {
+              contents,
+              stats: entry.stats as fs.Stats,
+              path: absolutePath
+            }
+            // Use relative path as key
+            this.files[entry.path] = file
+          })
+        })
+      )
+    }
 
     await new Wares().use(this.middlewares).run(this)
 
