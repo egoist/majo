@@ -79,6 +79,11 @@ export class Majo {
     this.files = {}
   }
 
+  private queueFileMutation(mutation: (context: Majo) => Promise<void> | void) {
+    this.use(mutation)
+    return this
+  }
+
   /**
    * Find files from specific directory
    * @param source Glob patterns
@@ -157,9 +162,22 @@ export class Majo {
    * @param fn Transform handler
    */
   async transform(relativePath: string, fn: TransformHandler) {
-    const contents = this.files[relativePath].contents.toString()
-    const newContents = await fn(contents)
-    this.files[relativePath].contents = Buffer.from(newContents)
+    const transformFile = async (context: Majo) => {
+      const target = context.files[relativePath]
+      if (!target) {
+        throw new Error(`[majo] Cannot transform missing file: ${relativePath}`)
+      }
+      const contents = target.contents.toString()
+      const newContents = await fn(contents)
+      target.contents = Buffer.from(newContents)
+    }
+
+    if (this.files[relativePath]) {
+      await transformFile(this)
+      return
+    }
+
+    this.queueFileMutation(transformFile)
   }
 
   /**
@@ -208,8 +226,22 @@ export class Majo {
    * @param string File content as a UTF-8 string
    */
   writeContents(relativePath: string, contents: string) {
-    this.files[relativePath].contents = Buffer.from(contents)
-    return this
+    const writeToFile = (context: Majo) => {
+      const target = context.files[relativePath]
+      if (!target) {
+        throw new Error(
+          `[majo] Cannot write contents for missing file: ${relativePath}`
+        )
+      }
+      target.contents = Buffer.from(contents)
+    }
+
+    if (this.files[relativePath]) {
+      writeToFile(this)
+      return this
+    }
+
+    return this.queueFileMutation(writeToFile)
   }
 
   /**
@@ -233,8 +265,16 @@ export class Majo {
    * @param relativePath Relative path
    */
   deleteFile(relativePath: string) {
-    delete this.files[relativePath]
-    return this
+    const deleteByPath = (context: Majo) => {
+      delete context.files[relativePath]
+    }
+
+    if (this.files[relativePath]) {
+      deleteByPath(this)
+      return this
+    }
+
+    return this.queueFileMutation(deleteByPath)
   }
 
   /**
@@ -243,8 +283,23 @@ export class Majo {
    * @param file
    */
   createFile(relativePath: string, file: File) {
-    this.files[relativePath] = file
-    return this
+    const createAtPath = (context: Majo) => {
+      const absolutePath = context.baseDir
+        ? path.resolve(context.baseDir, relativePath)
+        : file.path
+      context.files[relativePath] = {
+        path: absolutePath,
+        stats: file.stats,
+        contents: Buffer.from(file.contents)
+      }
+    }
+
+    if (Object.keys(this.files).length > 0) {
+      createAtPath(this)
+      return this
+    }
+
+    return this.queueFileMutation(createAtPath)
   }
 
   /**
@@ -258,13 +313,26 @@ export class Majo {
     if (!this.baseDir) {
       return this
     }
-    const file = this.files[fromPath]
-    this.createFile(toPath, {
-      path: path.resolve(this.baseDir, toPath),
-      stats: file.stats,
-      contents: file.contents
-    })
-    this.deleteFile(fromPath)
+
+    const renameFile = (context: Majo) => {
+      const file = context.files[fromPath]
+      if (!file) {
+        throw new Error(`[majo] Cannot rename missing file: ${fromPath}`)
+      }
+      context.createFile(toPath, {
+        path: path.resolve(context.baseDir as string, toPath),
+        stats: file.stats,
+        contents: file.contents
+      })
+      context.deleteFile(fromPath)
+    }
+
+    if (this.files[fromPath]) {
+      renameFile(this)
+      return this
+    }
+
+    this.queueFileMutation(renameFile)
     return this
   }
 }

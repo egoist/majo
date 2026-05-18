@@ -55,11 +55,21 @@ test('rename', async () => {
 
   stream.source('**/*', { baseDir: path.join(__dirname, 'fixture/rename') })
 
-  stream.use(ctx => {
-    ctx.rename('a.txt', 'b/c.txt')
-  })
+  stream.rename('a.txt', 'b/c.txt')
 
   await stream.process()
 
   expect(stream.fileList).toEqual(['b/c.txt'])
+})
+
+test('write and transform before process', async () => {
+  const stream = majo()
+  stream.source('**/*', { baseDir: path.join(__dirname, 'fixture/rename') })
+
+  stream.writeContents('a.txt', 'hello')
+  await stream.transform('a.txt', contents => `${contents}-world`)
+
+  await stream.process()
+
+  expect(stream.fileContents('a.txt')).toBe('hello-world')
 })
