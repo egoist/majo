@@ -12,6 +12,20 @@ test('main', async () => {
   ).toEqual(stream.fileList)
 })
 
+test('multiple sources', async () => {
+  const outputDir = path.join(__dirname, 'output/multiple-sources')
+  await remove(outputDir)
+  const stream = await majo()
+    .source('tmp.js', { baseDir: path.join(__dirname, 'fixture/source') })
+    .source('foo.md', { baseDir: path.join(__dirname, 'fixture/stats') })
+    .dest('./output/multiple-sources', { baseDir: __dirname })
+
+  expect(stream.fileList).toEqual(['foo.md', 'tmp.js'])
+  expect(
+    await glob('**/*', { cwd: outputDir }).then(result => result.sort())
+  ).toEqual(stream.fileList)
+})
+
 test('middleware', async () => {
   const stream = majo()
     .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
