@@ -53,6 +53,12 @@ export interface DestOptions {
   clean?: boolean
 }
 
+export interface SourceConfig {
+  patterns: string[]
+  baseDir: string
+  dotFiles: boolean
+}
+
 export class Majo {
   middlewares: Middleware[]
   /**
@@ -66,6 +72,7 @@ export class Majo {
    * You normally set this by calling `.source`
    */
   baseDir?: string
+  sourceConfigs: SourceConfig[]
   sourcePatterns?: string[]
   dotFiles?: boolean
   files: {
@@ -77,6 +84,7 @@ export class Majo {
     this.middlewares = []
     this.meta = {}
     this.files = {}
+    this.sourceConfigs = []
   }
 
   /**
@@ -88,8 +96,15 @@ export class Majo {
    */
   source(patterns: string | string[], options: SourceOptions = {}) {
     const { baseDir = '.', dotFiles = true, onWrite } = options
-    this.baseDir = path.resolve(baseDir)
-    this.sourcePatterns = Array.isArray(patterns) ? patterns : [patterns]
+    if (!this.baseDir) {
+      this.baseDir = path.resolve(baseDir)
+    }
+    const newPatterns = Array.isArray(patterns) ? patterns : [patterns]
+    this.sourceConfigs.push({
+      patterns: newPatterns,
+      baseDir: path.resolve(baseDir),
+      dotFiles
+    })
     this.dotFiles = dotFiles
     this.onWrite = onWrite
     return this
@@ -107,30 +122,32 @@ export class Majo {
    * Process middlewares against files
    */
   async process() {
-    if (!this.sourcePatterns || !this.baseDir) {
+    if (this.sourceConfigs.length === 0) {
       throw new Error(`[majo] You need to call .source first`)
     }
 
-    const allEntries = await glob(this.sourcePatterns, {
-      cwd: this.baseDir,
-      dot: this.dotFiles,
-      stats: true
-    })
-
-    await Promise.all(
-      allEntries.map(entry => {
-        const absolutePath = path.resolve(this.baseDir as string, entry.path)
-        return readFile(absolutePath).then(contents => {
-          const file = {
-            contents,
-            stats: entry.stats as fs.Stats,
-            path: absolutePath
-          }
-          // Use relative path as key
-          this.files[entry.path] = file
-        })
+    for (const config of this.sourceConfigs) {
+      const allEntries = await glob(config.patterns, {
+        cwd: config.baseDir,
+        dot: config.dotFiles,
+        stats: true
       })
-    )
+
+      await Promise.all(
+        allEntries.map(entry => {
+          const absolutePath = path.resolve(config.baseDir, entry.path)
+          return readFile(absolutePath).then(contents => {
+            const file = {
+              contents,
+              stats: entry.stats as fs.Stats,
+              path: absolutePath
+            }
+            // Use relative path as key
+            this.files[entry.path] = file
+          })
+        })
+      )
+    }
 
     await new Wares().use(this.middlewares).run(this)
 

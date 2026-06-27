@@ -63,3 +63,14 @@ test('rename', async () => {
 
   expect(stream.fileList).toEqual(['b/c.txt'])
 })
+
+test('multiple source calls', async () => {
+  const stream = majo()
+    .source('**/*.js', { baseDir: path.join(__dirname, 'fixture/source') })
+    .source('**/*.js', { baseDir: path.join(__dirname, 'fixture/source2') })
+
+  await stream.process()
+
+  expect(stream.fileList).toContain('tmp.js')
+  expect(stream.fileList).toContain('extra.js')
+})
