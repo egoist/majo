@@ -5,8 +5,11 @@ import glob from 'fast-glob'
 import rimraf from 'rimraf'
 import ensureDir from 'mkdirp'
 import Wares from './wares'
+import { MajoContext } from './context'
 
-export type Middleware = (ctx: Majo) => Promise<void> | void
+export { MajoContext } from './context'
+
+export type Middleware = (ctx: MajoContext) => Promise<void> | void
 
 const readFile = promisify(fs.readFile)
 const writeFile = promisify(fs.writeFile)
@@ -132,7 +135,15 @@ export class Majo {
       })
     )
 
-    await new Wares().use(this.middlewares).run(this)
+    const context = new MajoContext(this.baseDir, this.files, this.meta)
+    try {
+      await new Wares().use(this.middlewares).run(context)
+    } finally {
+      // Replacements made by middleware remain visible on the stream, including
+      // when a later middleware rejects.
+      this.files = context.files
+      this.meta = context.meta
+    }
 
     return this
   }
@@ -143,23 +154,8 @@ export class Majo {
    */
   filter(fn: FilterHandler) {
     return this.use(context => {
-      for (const relativePath in context.files) {
-        if (!fn(relativePath, context.files[relativePath])) {
-          delete context.files[relativePath]
-        }
-      }
+      context.filter(fn)
     })
-  }
-
-  /**
-   * Transform file at given path
-   * @param relativePath Relative path
-   * @param fn Transform handler
-   */
-  async transform(relativePath: string, fn: TransformHandler) {
-    const contents = this.files[relativePath].contents.toString()
-    const newContents = await fn(contents)
-    this.files[relativePath].contents = Buffer.from(newContents)
   }
 
   /**
@@ -203,16 +199,6 @@ export class Majo {
   }
 
   /**
-   * Write contents to specific file
-   * @param relativePath Relative path
-   * @param string File content as a UTF-8 string
-   */
-  writeContents(relativePath: string, contents: string) {
-    this.files[relativePath].contents = Buffer.from(contents)
-    return this
-  }
-
-  /**
    * Get the fs.Stats object of specified file
    * @para relativePath Relative path
    */
@@ -229,43 +215,10 @@ export class Majo {
   }
 
   /**
-   * Delete a file
-   * @param relativePath Relative path
-   */
-  deleteFile(relativePath: string) {
-    delete this.files[relativePath]
-    return this
-  }
-
-  /**
-   * Create a new file
-   * @param relativePath Relative path
-   * @param file
-   */
-  createFile(relativePath: string, file: File) {
-    this.files[relativePath] = file
-    return this
-  }
-
-  /**
    * Get an array of sorted file paths
    */
   get fileList(): string[] {
     return Object.keys(this.files).sort()
-  }
-
-  rename(fromPath: string, toPath: string) {
-    if (!this.baseDir) {
-      return this
-    }
-    const file = this.files[fromPath]
-    this.createFile(toPath, {
-      path: path.resolve(this.baseDir, toPath),
-      stats: file.stats,
-      contents: file.contents
-    })
-    this.deleteFile(fromPath)
-    return this
   }
 }
 
