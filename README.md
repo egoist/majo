@@ -45,6 +45,37 @@ function ignoreSomeFiles(stream) {
 }
 ```
 
+## Middleware context
+
+A middleware receives a `MajoContext` containing the loaded `files`, their
+`baseDir`, and the `meta` object shared by all middleware in the pipeline. File
+operations belong to this context and run immediately. The `Majo` stream itself
+configures the pipeline with `source`, `use`, `filter`, `process`, and `dest`.
+
+```js
+const stream = majo()
+  .source('**/*.txt')
+  .use(async context => {
+    context.rename('notes.txt', 'archive/notes.txt')
+    await context.transform('archive/notes.txt', text => text.toUpperCase())
+    context.meta.processed = true
+  })
+
+await stream.dest('dist')
+console.log(stream.fileList, stream.meta.processed)
+```
+
+`context.filter` filters loaded files immediately; `stream.filter` schedules a
+filter in the pipeline. Async middleware and `context.transform` must be awaited.
+`process` and `dest` still return the stream, whose `files`, `fileList`, `file`,
+`fileContents`, and `fileStats` provide access to the results.
+
+**Migration:** move calls to `rename`, `createFile`, `deleteFile`, `writeContents`,
+and `transform` from the stream into a `use(context => ...)` callback. These
+mutating methods are no longer on `Majo`, so they cannot silently run before the
+source has loaded. TypeScript middleware annotations should use `Middleware` or
+`MajoContext` instead of `Majo`.
+
 ## Documentation
 
 https://majo.egoist.sh
